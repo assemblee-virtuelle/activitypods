@@ -24,19 +24,19 @@ const LEAVE_EVENT_MAPPING = {
   actionLink: "/e/{{encodeUri activity.object.id}}"
 };
 
-const NEW_MESSAGE_ABOUT_EVENT_MAPPING = {
-  key: 'new_message_about_event',
-  title: {
-    en: `{{emitterProfile.vcard:given-name}} writes you about "{{activity.object.context.name}}"`,
-    fr: `{{emitterProfile.vcard:given-name}} vous écrit au sujet de "{{activity.object.context.name}}"`
-  },
-  description: '{{activity.object.content}}',
-  actionName: {
-    en: 'Reply',
-    fr: 'Répondre'
-  },
-  actionLink: "/Profile/{{encodeUri emitterProfile.id}}/show"
-};
+// const NEW_MESSAGE_ABOUT_EVENT_MAPPING = {
+//   key: 'new_message_about_event',
+//   title: {
+//     en: `{{emitterProfile.vcard:given-name}} writes you about "{{activity.object.context.name}}"`,
+//     fr: `{{emitterProfile.vcard:given-name}} vous écrit au sujet de "{{activity.object.context.name}}"`
+//   },
+//   description: '{{activity.object.content}}',
+//   actionName: {
+//     en: 'Reply',
+//     fr: 'Répondre'
+//   },
+//   actionLink: "/Profile/{{encodeUri emitterProfile.id}}/show"
+// };
 
 const POST_EVENT_CONTACT_REQUEST_MAPPING = {
   key: 'post_event_contact_request',
@@ -58,6 +58,6 @@ const POST_EVENT_CONTACT_REQUEST_MAPPING = {
 module.exports = {
   JOIN_EVENT_MAPPING,
   LEAVE_EVENT_MAPPING,
-  NEW_MESSAGE_ABOUT_EVENT_MAPPING,
+  // NEW_MESSAGE_ABOUT_EVENT_MAPPING,
   POST_EVENT_CONTACT_REQUEST_MAPPING
 };

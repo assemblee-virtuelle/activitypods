@@ -14,15 +14,15 @@ const LEAVE_EVENT = {
   },
 };
 
-const NEW_MESSAGE_ABOUT_EVENT = {
-  type: ACTIVITY_TYPES.CREATE,
-  object: {
-    type: OBJECT_TYPES.NOTE,
-    context: {
-      type: OBJECT_TYPES.EVENT
-    }
-  },
-};
+// const NEW_MESSAGE_ABOUT_EVENT = {
+//   type: ACTIVITY_TYPES.CREATE,
+//   object: {
+//     type: OBJECT_TYPES.NOTE,
+//     context: {
+//       type: OBJECT_TYPES.EVENT
+//     }
+//   },
+// };
 
 const POST_EVENT_CONTACT_REQUEST = {
   type: ACTIVITY_TYPES.OFFER,
@@ -56,7 +56,7 @@ const POST_EVENT_ACCEPT_CONTACT_REQUEST = {
 module.exports = {
   JOIN_EVENT,
   LEAVE_EVENT,
-  NEW_MESSAGE_ABOUT_EVENT,
+  // NEW_MESSAGE_ABOUT_EVENT,
   POST_EVENT_CONTACT_REQUEST,
   POST_EVENT_ACCEPT_CONTACT_REQUEST
 };
