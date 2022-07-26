@@ -7,9 +7,9 @@
   "dependencies": {
     "@activitypods/announcer": "1.1.0",
     "@activitypods/synchronizer": "1.1.0",
-    "@semapps/activitypub": "0.4.0-alpha.32",
-    "@semapps/ldp": "0.4.0-alpha.32",
-    "@semapps/mime-types": "0.4.0-alpha.32",
+    "@semapps/activitypub": "0.4.0-alpha.36",
+    "@semapps/ldp": "0.4.0-alpha.36",
+    "@semapps/mime-types": "0.4.0-alpha.36",
     "moleculer-cron": "^0.0.2"
   },
   "publishConfig": {

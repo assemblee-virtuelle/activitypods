@@ -5,8 +5,8 @@
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/activitypub": "0.4.0-alpha.32",
-    "@semapps/ldp": "0.4.0-alpha.32"
+    "@semapps/activitypub": "0.4.0-alpha.36",
+    "@semapps/ldp": "0.4.0-alpha.36"
   },
   "publishConfig": {
     "access": "public"

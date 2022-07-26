@@ -1,7 +1,7 @@
 const path = require('path');
 const urlJoin = require('url-join');
 const { ActivityPubService, ActivityMappingService, ProxyService } = require('@semapps/activitypub');
-const { AuthLocalService } = require('@semapps/auth');
+const { AuthLocalService, AuthOIDCService } = require('@semapps/auth');
 const FusekiAdminService = require('@semapps/fuseki-admin');
 const { JsonLdService } = require('@semapps/jsonld');
 const { LdpService, DocumentTaggerMixin } = require('@semapps/ldp');
@@ -31,9 +31,10 @@ const CoreService = {
     },
     jsonContext: null,
     queueServiceUrl: null,
+    authType: 'local'
   },
   created() {
-    let { baseUrl, baseDir, fuseki, jsonContext, queueServiceUrl } = this.settings;
+    let { baseUrl, baseDir, fuseki, jsonContext, queueServiceUrl, authType } = this.settings;
 
     // If an external JSON context is not provided, we will use a local one
     const localJsonContext = urlJoin(baseUrl, '_system', 'context.json');
@@ -50,9 +51,13 @@ const CoreService = {
       },
     });
 
-    this.broker.createService(ApiService);
+    this.broker.createService(ApiService, {
+      settings: {
+        ...this.settings.api
+      }
+    });
 
-    this.broker.createService(AuthLocalService, {
+    this.broker.createService(authType === 'local' ? AuthLocalService : AuthOIDCService, {
       settings: {
         baseUrl,
         jwtPath: path.resolve(baseDir, './jwt'),

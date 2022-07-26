@@ -15,9 +15,13 @@ module.exports = {
     },
     jsonContext: CONFIG.JSON_CONTEXT,
     queueServiceUrl: CONFIG.QUEUE_SERVICE_URL,
+    authType: CONFIG.AUTH_TYPE,
     auth: {
       reservedUsernames: CONFIG.AUTH_RESERVED_USER_NAMES,
       accountsDataset: CONFIG.AUTH_ACCOUNTS_DATASET,
+      issuer: CONFIG.AUTH_OIDC_ISSUER,
+      clientId: CONFIG.AUTH_OIDC_CLIENT_ID,
+      clientSecret: CONFIG.AUTH_OIDC_CLIENT_SECRET,
       mail: {
         from: `${CONFIG.FROM_NAME} <${CONFIG.FROM_EMAIL}>`,
         transport,
@@ -26,6 +30,13 @@ module.exports = {
           frontUrl: CONFIG.NOTIFICATIONS_DEFAULT_FRONT_URL,
         },
       },
+      form: {
+        instanceName: CONFIG.INSTANCE_NAME,
+        path: '/form'
+      }
     },
+    api: {
+      port: CONFIG.PORT
+    }
   },
 };
