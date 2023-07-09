@@ -1,0 +1,16 @@
+{
+  "name": "@activitypods/openbadges",
+  "version": "1.1.0",
+  "description": "ActivityPods app for open badges",
+  "license": "Apache-2.0",
+  "author": "Virtual Assembly",
+  "dependencies": {
+    "@activitypods/announcer": "1.1.0",
+    "@activitypods/synchronizer": "1.1.0",
+    "@semapps/ldp": "0.4.3",
+    "png-itxt": "^2.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

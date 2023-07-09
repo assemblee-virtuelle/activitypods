@@ -18,6 +18,9 @@
     "semapps": "http://semapps.org/ns/core#",
     "vcard": "http://www.w3.org/2006/vcard/ns#",
     "void": "http://rdfs.org/ns/void#",
+    "obi": "https://w3id.org/openbadges#",
+    "extensions": "https://w3id.org/openbadges/extensions#",
+    "cred": "https://w3id.org/credentials#",
 
     "id": "@id",
     "type": "@type",
@@ -763,7 +766,7 @@
     "vcard:hasAddress": {
       "@type": "@id"
     },
-    "vcard:hasGeo": {
+    "vcard:geo": {
       "@type": "@id"
     },
     "vcard:photo": {
@@ -815,6 +818,67 @@
     },
     "mp:expirationDate": {
       "@type": "xsd:dateTime"
-    }
+    },
+
+    "AlignmentObject": "schema:AlignmentObject",
+    "Endorsement": "cred:Credential",
+    "Assertion": "obi:Assertion",
+    "BadgeClass": "obi:BadgeClass",
+    "Criteria": "obi:Criteria",
+    "Evidence": "obi:Evidence",
+    "Extension": "obi:Extension",
+    "FrameValidation": "obi:FrameValidation",
+    "IdentityObject": "obi:IdentityObject",
+    "HostedBadge": "obi:HostedBadge",
+    "hosted": "obi:HostedBadge",
+    "Issuer": "obi:Issuer",
+    "RevocationList": "obi:RevocationList",
+    "SignedBadge": "obi:SignedBadge",
+    "signed": "obi:SignedBadge",
+    "TypeValidation": "obi:TypeValidation",
+    "VerificationObject": "obi:VerificationObject",
+
+    "author": { "@id": "schema:author", "@type": "@id" },
+    "caption": { "@id": "schema:caption" },
+    "claim": {"@id": "cred:claim", "@type": "@id"},
+    "created": { "@id": "dc:created", "@type": "xsd:dateTime" },
+    "creator": { "@id": "dc:creator", "@type": "@id" },
+    "description": { "@id": "schema:description" },
+    "email": { "@id": "schema:email" },
+    "endorsement": {"@id": "cred:credential", "@type": "@id"},
+    "genre": { "@id": "schema:genre" },
+    "related": { "@id": "dc:relation", "@type": "@id" },
+    "startsWith": { "@id": "http://purl.org/dqm-vocabulary/v1/dqm#startsWith" },
+    "tags": { "@id": "schema:keywords" },
+    "targetDescription": { "@id": "schema:targetDescription" },
+    "targetFramework": { "@id": "schema:targetFramework" },
+    "targetName": { "@id": "schema:targetName" },
+    "targetUrl": { "@id": "schema:targetUrl" },
+    "telephone": { "@id": "schema:telephone" },
+    "version": { "@id": "schema:version" },
+
+    "alignment": { "@id": "obi:alignment", "@type": "@id" },
+    "allowedOrigins": { "@id": "obi:allowedOrigins" },
+    "badge": { "@id": "obi:badge", "@type": "@id" },
+    "criteria": { "@id": "obi:criteria", "@type": "@id" },
+    "endorsementComment": { "@id": "obi:endorsementComment" },
+    "evidence": { "@id": "obi:evidence", "@type": "@id" },
+    "hashed": { "@id": "obi:hashed", "@type": "xsd:boolean" },
+    "identity": { "@id": "obi:identityHash" },
+    "issuedOn": { "@id": "obi:issueDate", "@type": "xsd:dateTime" },
+    "issuer": { "@id": "obi:issuer", "@type": "@id" },
+    "narrative": { "@id": "obi:narrative" },
+    "recipient": { "@id": "obi:recipient", "@type": "@id" },
+    "revocationList": { "@id": "obi:revocationList", "@type": "@id" },
+    "revocationReason": { "@id": "obi:revocationReason" },
+    "revokedAssertions": { "@id": "obi:revoked" },
+    "targetCode": { "@id": "obi:targetCode" },
+    "uid": { "@id": "obi:uid" },
+    "validatesType": "obi:validatesType",
+    "validationFrame": "obi:validationFrame",
+    "validationSchema": "obi:validationSchema",
+    "verification": { "@id": "obi:verify", "@type": "@id" },
+    "verificationProperty": { "@id": "obi:verificationProperty" },
+    "verify": "verification"
   }
 }
