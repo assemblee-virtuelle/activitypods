@@ -2,15 +2,13 @@ const fetch = require('node-fetch');
 const urlJoin = require('url-join');
 const { ControlledContainerMixin, useFullURI, defaultToArray } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const CONFIG = require('../config/config');
+const ontologies = require('../config/ontologies.json');
 
 module.exports = {
   name: 'core.front-apps',
   mixins: [ControlledContainerMixin],
   settings: {
-    baseUrl: null,
-    frontendUrl: null,
-    ontologies: [],
-    // ControlledContainerMixin settings
     path: '/front-apps',
     acceptedTypes: ['apods:FrontAppRegistration'],
     excludeFromMirror: true,
@@ -30,9 +28,9 @@ module.exports = {
     }
 
     // POD provider app
-    if (this.settings.frontendUrl) {
+    if (CONFIG.FRONTEND_URL) {
       this.trustedApps.push({
-        'apods:domainName': new URL(this.settings.frontendUrl).host,
+        'apods:domainName': new URL(CONFIG.FRONTEND_URL).host,
         'apods:handledTypes': [
           'http://www.w3.org/2006/vcard/ns#Individual',
           'https://www.w3.org/ns/activitystreams#Profile',
@@ -79,7 +77,7 @@ module.exports = {
 
       if (!type) throw new Error('The type or URI must be provided');
 
-      if (!type.startsWith('http')) type = useFullURI(type, this.settings.ontologies);
+      if (!type.startsWith('http')) type = useFullURI(type, ontologies);
 
       const results = await ctx.call('triplestore.query', {
         query: `
@@ -118,7 +116,7 @@ module.exports = {
 
         for (let app of this.trustedApps) {
           if (!app['apods:locales'] || defaultToArray(app['apods:locales']).includes(account.preferredLocale)) {
-            const appUri = urlJoin(this.settings.baseUrl, dataset, 'data', 'front-apps', app['apods:domainName']);
+            const appUri = urlJoin(CONFIG.HOME_URL, dataset, 'data', 'front-apps', app['apods:domainName']);
             const exists = await ctx.call('ldp.resource.exist', {
               resourceUri: appUri,
               webId: 'system'
@@ -140,7 +138,7 @@ module.exports = {
                         : undefined
                   },
                   contentType: MIME_TYPES.JSON,
-                  webId: urlJoin(this.settings.baseUrl, dataset)
+                  webId: urlJoin(CONFIG.HOME_URL, dataset)
                 },
                 { parentCtx: ctx }
               );
@@ -155,7 +153,7 @@ module.exports = {
                   },
                   contentType: MIME_TYPES.JSON,
                   slug: app['apods:domainName'],
-                  webId: urlJoin(this.settings.baseUrl, dataset)
+                  webId: urlJoin(CONFIG.HOME_URL, dataset)
                 },
                 { parentCtx: ctx }
               );

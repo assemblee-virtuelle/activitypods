@@ -1,10 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 const ApiGatewayService = require('moleculer-web');
+const CONFIG = require('../config/config');
 
 module.exports = {
   mixins: [ApiGatewayService],
   settings: {
+    port: CONFIG.PORT,
     httpServerTimeout: 300000,
     cors: {
       origin: '*',
@@ -35,7 +37,7 @@ module.exports = {
     },
     redirectToFront(ctx) {
       ctx.meta.$statusCode = 302;
-      ctx.meta.$location = this.settings.frontendUrl;
+      ctx.meta.$location = CONFIG.FRONTEND_URL;
     }
   },
   methods: {
