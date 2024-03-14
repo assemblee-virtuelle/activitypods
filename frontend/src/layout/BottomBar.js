@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useGetIdentity, useTranslate } from 'react-admin';
+import { useTranslate } from 'react-admin';
 import { BottomNavigation, BottomNavigationAction, Box, AppBar } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { Link, useLocation } from 'react-router-dom';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
-import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import StorageIcon from '@mui/icons-material/Storage';
 import AppsIcon from '@mui/icons-material/Apps';
 import SettingsIcon from '@mui/icons-material/Settings';
 
@@ -36,12 +36,11 @@ const BottomBar = () => {
   const classes = useStyles();
   const [value, setValue] = useState();
   const translate = useTranslate();
-  const { data: identity } = useGetIdentity();
   const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname === '/Profile/' + encodeURIComponent(identity?.profileData?.id)) {
-      setValue('profile');
+    if (location.pathname === '/MyData/') {
+      setValue('data');
     } else if (location.pathname.startsWith('/Profile')) {
       setValue('contacts');
     } else if (location.pathname.startsWith('/App')) {
@@ -49,7 +48,7 @@ const BottomBar = () => {
     } else if (location.pathname.startsWith('/settings')) {
       setValue('settings');
     }
-  }, [location.pathname, identity, setValue]);
+  }, [location.pathname, setValue]);
 
   const onChange = useCallback(
     (e, newValue) => {
@@ -80,11 +79,11 @@ const BottomBar = () => {
             classes={{ selected: classes.selected }}
           />
           <BottomNavigationAction
-            label={translate('app.page.profile_short')}
-            value="profile"
-            icon={<AssignmentIndIcon />}
+            label={translate('app.page.data_short')}
+            value="data"
+            icon={<StorageIcon />}
             component={Link}
-            to={'/Profile/' + encodeURIComponent(identity?.profileData?.id)}
+            to="/data"
             classes={{ selected: classes.selected }}
           />
           <BottomNavigationAction

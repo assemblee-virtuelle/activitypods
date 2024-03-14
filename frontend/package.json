@@ -14,6 +14,8 @@
     "@semapps/input-components": "0.6.0-alpha.5",
     "@semapps/list-components": "0.6.0-alpha.5",
     "@semapps/semantic-data-provider": "0.6.0-alpha.5",
+    "dashify": "2.0.0",
+    "jsonld": "^5.2.0",
     "leaflet": "^1.8.0",
     "leaflet-defaulticon-compatibility": "^0.1.1",
     "leaflet.markercluster": "^1.5.3",

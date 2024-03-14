@@ -27,6 +27,16 @@ module.exports = {
         }
       ]
     },
+    classDescriptions: {
+      'as:Event': {
+        label: {
+          en: 'Events',
+          fr: 'Evénements'
+        },
+        labelPredicate: 'as:name',
+        openEndpoint: 'https://example.app/r'
+      }
+    },
     queueServiceUrl: CONFIG.QUEUE_SERVICE_URL
   }
 };

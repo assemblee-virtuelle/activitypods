@@ -173,7 +173,7 @@ const AppList = () => {
   useCheckAuthenticated();
   const translate = useTranslate();
   return (
-    <List title={translate('app.page.apps')} actions={[]} perPage={1000}>
+    <List title={translate('app.page.apps')} actions={[]} perPage={1000} queryOptions={{ staleTime: Infinity }}>
       <CardList>
         <AppRegistration />
       </CardList>

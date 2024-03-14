@@ -21,7 +21,7 @@ const ProfileList = () => {
       sort={{ field: 'vcard:given-name', order: 'ASC' }}
       perPage={1000}
     >
-      <ContactRequestsBlock />
+      {/* <ContactRequestsBlock /> */}
       <SimpleList
         primaryText={record => record['vcard:given-name']}
         secondaryText={record => formatUsername(record.describes)}

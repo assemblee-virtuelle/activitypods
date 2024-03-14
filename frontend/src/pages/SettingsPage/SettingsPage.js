@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useCheckAuthenticated } from '@semapps/auth-provider';
-import { useTranslate, useGetList, useAuthProvider, useNotify } from 'react-admin';
+import { useTranslate, useGetList, useAuthProvider, useNotify, useCreatePath, useGetIdentity } from 'react-admin';
 import {
   Box,
   Typography,
@@ -17,6 +17,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import makeStyles from '@mui/styles/makeStyles';
 import { useNavigate } from 'react-router-dom';
 import EmailIcon from '@mui/icons-material/Email';
+import PersonIcon from '@mui/icons-material/Person';
 import PlaceIcon from '@mui/icons-material/Place';
 import LockIcon from '@mui/icons-material/Lock';
 import EditIcon from '@mui/icons-material/Edit';
@@ -43,6 +44,8 @@ const SettingsPage = () => {
   const translate = useTranslate();
   const authProvider = useAuthProvider();
   const navigate = useNavigate();
+  const { data: identity } = useGetIdentity();
+  const createPath = useCreatePath();
   const notify = useNotify();
   const [accountSettings, setAccountSettings] = useState({});
   useCheckAuthenticated();
@@ -56,6 +59,12 @@ const SettingsPage = () => {
   }, [setAccountSettings, authProvider]);
 
   const settings = [
+    {
+      path: createPath({ resource: 'Profile', id: identity?.profileData?.id, type: 'edit' }),
+      icon: <PersonIcon />,
+      label: 'app.setting.profile',
+      value: identity?.fullName
+    },
     {
       path: '/Location',
       icon: <PlaceIcon />,

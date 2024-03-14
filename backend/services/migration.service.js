@@ -3,6 +3,11 @@ const { triple, namedNode, literal } = require('@rdfjs/data-model');
 module.exports = {
   name: 'migration',
   actions: {
+    async registerClassDescriptions(ctx) {
+      await ctx.call('profiles.profile.registerClassDescriptionForAll');
+      await ctx.call('profiles.location.registerClassDescriptionForAll');
+      await ctx.call('profiles.contactgroup.registerClassDescriptionForAll');
+    },
     async migratePreferredLocale(ctx) {
       for (let dataset of await ctx.call('pod.list')) {
         const [account] = await ctx.call('auth.account.find', { query: { username: dataset } });

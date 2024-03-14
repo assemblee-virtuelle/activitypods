@@ -42,8 +42,8 @@ module.exports = {
     page: {
       contacts: 'Mon réseau',
       contacts_short: 'Réseau',
-      profile: 'Mon profil',
-      profile_short: 'Profil',
+      data: 'Mes données',
+      data_short: 'Données',
       apps: 'Mes applications',
       apps_short: 'Applis',
       addresses: 'Mes adresses',
@@ -64,6 +64,7 @@ module.exports = {
       invite_success: 'Connection établie !'
     },
     setting: {
+      profile: 'Mon profil',
       email: 'Adresse mail',
       password: 'Mot de passe',
       addresses: 'Mes adresses',
@@ -101,7 +102,10 @@ module.exports = {
       current_password: 'Mot de passe actuel',
       new_password: 'Nouveau mot de passe',
       confirm_new_password: 'Confirmer le nouveau mot de passe',
-      provider_url: "URL de l'espace personnel (POD)"
+      provider_url: "URL de l'espace personnel (POD)",
+      creator: 'Créé par',
+      created: 'Créé le',
+      modified: 'Modifié le'
     },
     helper: {
       add_contact:

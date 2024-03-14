@@ -15,6 +15,7 @@ module.exports = {
       ignore_contact_request: 'Ignore contact request',
       login: 'Login with an account',
       open_app: 'Open application',
+      open: 'Open',
       reject: 'Reject',
       reject_contact_request: 'Reject contact request',
       remove_contact: 'Remove contact',
@@ -42,8 +43,8 @@ module.exports = {
     page: {
       contacts: 'My network',
       contacts_short: 'Network',
-      profile: 'My profile',
-      profile_short: 'Profile',
+      data: 'My data',
+      data_short: 'Data',
       apps: 'My applications',
       apps_short: 'Apps',
       settings: 'Settings',
@@ -64,6 +65,7 @@ module.exports = {
       invite_success: 'Success!'
     },
     setting: {
+      profile: 'My profile',
       email: 'Email address',
       password: 'Password',
       addresses: 'My addresses',
@@ -72,7 +74,7 @@ module.exports = {
     authorization: {
       required: 'Required access',
       optional: 'Optional access',
-      access_resources_of_type: '%{access_right} resources of type %{type}',
+      access_resources_of_type: '%{access_right} %{type} (%type_uri)',
       read: 'Read',
       append: 'Append',
       write: 'Write',
@@ -101,7 +103,10 @@ module.exports = {
       current_password: 'Current password',
       new_password: 'New password',
       confirm_new_password: 'Confirm new password',
-      provider_url: 'Provider URL'
+      provider_url: 'Provider URL',
+      creator: 'Creator',
+      created: 'Created',
+      modified: 'Modified'
     },
     helper: {
       add_contact: 'To add an user to your network, you need to know his ID (format: @bob@server.com).',

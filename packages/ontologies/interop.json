@@ -39,6 +39,9 @@
     "interop:hasAccessNeedGroup": {
       "@type": "@id"
     },
+    "interop:hasAccessDescriptionSet": {
+      "@type": "@id"
+    },
     "interop:hasDataGrant": {
       "@type": "@id"
     },
@@ -59,6 +62,9 @@
     },
     "interop:updatedAt": {
       "@type": "@id"
+    },
+    "interop:usesLanguage": {
+      "@type": "xsd:language"
     }
   }
 }

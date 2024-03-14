@@ -37,7 +37,12 @@ const specialRights = {
   }
 };
 
-const AccessNeedsList = ({ accessNeeds, required, allowedAccessNeeds, setAllowedAccessNeeds }) => {
+const getTranslatedType = (type, classDescriptions) => {
+  const match = classDescriptions.find(desc => desc['apods:describedClass'] === type);
+  return match ? match['skos:prefLabel'] : type;
+};
+
+const AccessNeedsList = ({ accessNeeds, required, allowedAccessNeeds, setAllowedAccessNeeds, classDescriptions }) => {
   const translate = useTranslate();
 
   const parseAccessNeed = useCallback(
@@ -61,16 +66,28 @@ const AccessNeedsList = ({ accessNeeds, required, allowedAccessNeeds, setAllowed
         if (hasWrite) accessRights.push(translate('app.authorization.write'));
         if (hasControl) accessRights.push(translate('app.authorization.control'));
 
+        const classDescription = classDescriptions.find(
+          desc => desc['apods:describedClass'] === accessNeed['apods:registeredClass']
+        );
+
         return {
-          label: translate('app.authorization.access_resources_of_type', {
-            access_right: accessRights.join('/'),
-            type: accessNeed['apods:registeredClass']
-          }),
+          label: (
+            <span>
+              {accessRights.join('/')}{' '}
+              {classDescription ? (
+                <span title={accessNeed['apods:registeredClass']} style={{ textDecoration: 'underline dotted grey' }}>
+                  {classDescription['skos:prefLabel']}
+                </span>
+              ) : (
+                accessNeed['apods:registeredClass']
+              )}
+            </span>
+          ),
           icon: hasAppend || hasWrite ? CreateNewFolderIcon : FolderIcon
         };
       }
     },
-    [translate]
+    [translate, classDescriptions]
   );
 
   const toggle = useCallback(

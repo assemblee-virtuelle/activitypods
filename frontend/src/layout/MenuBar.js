@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGetIdentity, useTranslate, Link } from 'react-admin';
+import { useTranslate, Link } from 'react-admin';
 import { Box, Container, Breadcrumbs } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 
@@ -23,7 +23,6 @@ const useStyles = makeStyles(theme => ({
 const MenuBar = () => {
   const classes = useStyles();
   const translate = useTranslate();
-  const { data: identity } = useGetIdentity();
   return (
     <Box className={classes.menuBar}>
       <Container>
@@ -34,8 +33,8 @@ const MenuBar = () => {
           <Link to="/AppRegistration" className={classes.link}>
             {translate('app.page.apps')}
           </Link>
-          <Link to={'/Profile/' + encodeURIComponent(identity?.profileData?.id)} className={classes.link}>
-            {translate('app.page.profile')}
+          <Link to="/data" className={classes.link}>
+            {translate('app.page.data')}
           </Link>
           <Link to="/settings" className={classes.link}>
             {translate('app.page.settings')}

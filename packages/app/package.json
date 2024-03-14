@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@activitypods/core": "1.1.0",
+    "@activitypods/description": "1.1.0",
     "@rdfjs/data-model": "^1.3.4",
     "@semapps/activitypub": "0.6.0-alpha.8",
     "@semapps/ldp": "0.6.0-alpha.8",

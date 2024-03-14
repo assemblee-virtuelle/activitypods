@@ -11,6 +11,7 @@ import SimpleBox from '../../layout/SimpleBox';
 import useTrustedApps from '../../hooks/useTrustedApps';
 import useApplication from '../../hooks/useApplication';
 import useAccessNeeds from '../../hooks/useAccessNeeds';
+import useClassDescriptions from '../../hooks/useClassDescriptions';
 import AccessNeedsList from './AccessNeedsList';
 
 const useStyles = makeStyles(() => ({
@@ -64,6 +65,7 @@ const AuthorizePageView = () => {
 
   const application = useApplication(clientDomain);
   const { requiredAccessNeeds, optionalAccessNeeds, loaded } = useAccessNeeds(application);
+  const { classDescriptions } = useClassDescriptions(application);
 
   useEffect(() => {
     if (loaded) {
@@ -143,11 +145,13 @@ const AuthorizePageView = () => {
             accessNeeds={requiredAccessNeeds}
             allowedAccessNeeds={allowedAccessNeeds}
             setAllowedAccessNeeds={setAllowedAccessNeeds}
+            classDescriptions={classDescriptions}
           />
           <AccessNeedsList
             accessNeeds={optionalAccessNeeds}
             allowedAccessNeeds={allowedAccessNeeds}
             setAllowedAccessNeeds={setAllowedAccessNeeds}
+            classDescriptions={classDescriptions}
           />
         </>
       )}

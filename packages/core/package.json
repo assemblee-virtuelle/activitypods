@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@activitypods/announcer": "1.1.0",
+    "@activitypods/description": "1.1.0",
     "@activitypods/ontologies": "1.1.0",
     "@activitypods/solid-notifications": "1.1.0",
     "@semapps/activitypub": "0.6.0-alpha.8",

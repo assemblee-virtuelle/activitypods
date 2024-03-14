@@ -2,5 +2,6 @@
   "username": "craig",
   "email": "craig@test.com",
   "password": "test",
-  "name": "Craig"
+  "name": "Craig",
+  "schema:knowsLanguage": "en"
 }

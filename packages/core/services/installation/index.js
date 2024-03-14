@@ -2,6 +2,7 @@ const urlJoin = require('url-join');
 const { ActivitiesHandlerMixin, ACTIVITY_TYPES } = require('@semapps/activitypub');
 const { arrayOf } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { ClassDescriptionService } = require('@activitypods/description');
 const interopContext = require('../../config/context-interop.json');
 const AppRegistrationsService = require('./sub-services/app-registrations');
 const AccessGrantsService = require('./sub-services/access-grants');
@@ -14,6 +15,7 @@ module.exports = {
     this.broker.createService(AppRegistrationsService);
     this.broker.createService(AccessGrantsService);
     this.broker.createService(DataGrantsService);
+    this.broker.createService(ClassDescriptionService);
   },
   activities: {
     install: {
@@ -22,7 +24,8 @@ module.exports = {
       },
       async onEmit(ctx, activity, emitterUri) {
         const appUri = activity.object;
-        let accessGrantsUris = [];
+        let accessGrantsUris = [],
+          preferredForClass = [];
 
         const app = await ctx.call('ldp.remote.get', { resourceUri: appUri });
 
@@ -38,8 +41,7 @@ module.exports = {
                 dataGrantsUris.push(
                   await ctx.call('data-grants.post', {
                     resource: {
-                      '@context': ['https://www.w3.org/ns/activitystreams', interopContext],
-                      '@type': 'interop:DataGrant',
+                      type: 'interop:DataGrant',
                       'interop:dataOwner': emitterUri,
                       'interop:grantee': appUri,
                       'apods:registeredClass': accessNeed['apods:registeredClass'],
@@ -67,8 +69,7 @@ module.exports = {
             accessGrantsUris.push(
               await ctx.call('access-grants.post', {
                 resource: {
-                  '@context': ['https://www.w3.org/ns/activitystreams', interopContext],
-                  '@type': 'interop:AccessGrant',
+                  type: 'interop:AccessGrant',
                   'interop:grantedBy': emitterUri,
                   'interop:grantedAt': new Date().toISOString(),
                   'interop:grantee': appUri,
@@ -82,15 +83,59 @@ module.exports = {
           }
         }
 
+        if (app['interop:hasAccessDescriptionSet']) {
+          const userData = await ctx.call('ldp.resource.get', {
+            resourceUri: emitterUri,
+            accept: MIME_TYPES.JSON,
+            webId: emitterUri
+          });
+
+          const userLocale = userData['schema:knowsLanguage'];
+
+          let classDescriptionsUris, defaultClassDescriptionsUris;
+
+          for (const setUri of arrayOf(app['interop:hasAccessDescriptionSet'])) {
+            const set = await ctx.call('ldp.remote.get', { resourceUri: setUri, webId: emitterUri });
+            if (set['interop:usesLanguage'] === userLocale) {
+              classDescriptionsUris = arrayOf(set['apods:hasClassDescription']);
+            } else if (set['interop:usesLanguage'] === 'en') {
+              defaultClassDescriptionsUris = arrayOf(set['apods:hasClassDescription']);
+            }
+          }
+
+          if (!classDescriptionsUris) classDescriptionsUris = defaultClassDescriptionsUris;
+
+          for (const classDescriptionUri of classDescriptionsUris) {
+            const classDescription = await ctx.call('ldp.remote.get', {
+              resourceUri: classDescriptionUri,
+              webId: emitterUri
+            });
+            await ctx.call('ldp.remote.store', { resource: classDescription, webId: emitterUri });
+            await ctx.call('class-description.attach', { resourceUri: classDescriptionUri });
+
+            const preferredAppForClass = await ctx.call('app-registrations.preferredAppForClass', {
+              type: classDescription['apods:describedClass']
+            });
+
+            console.log('preferredAppForClass', classDescription['apods:describedClass'], preferredAppForClass);
+
+            if (!preferredAppForClass) {
+              preferredForClass.push(classDescription['apods:describedClass']);
+            }
+          }
+        }
+
+        console.log('preferredForClass', preferredForClass);
+
         const appRegistrationUri = await ctx.call('app-registrations.post', {
           resource: {
-            '@context': ['https://www.w3.org/ns/activitystreams', interopContext],
-            '@type': 'interop:ApplicationRegistration',
+            type: 'interop:ApplicationRegistration',
             'interop:registeredBy': emitterUri,
             'interop:registeredAt': new Date().toISOString(),
             'interop:updatedAt': new Date().toISOString(),
             'interop:registeredAgent': appUri,
-            'interop:hasAccessGrant': accessGrantsUris
+            'interop:hasAccessGrant': accessGrantsUris,
+            'apods:preferredForClass': preferredForClass
           },
           contentType: MIME_TYPES.JSON
         });

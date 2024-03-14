@@ -16,7 +16,7 @@ module.exports = {
     async getForApp(ctx) {
       const { appUri } = ctx.params;
 
-      let filteredContainer = await this.actions.list(
+      const filteredContainer = await this.actions.list(
         {
           filters: {
             'http://www.w3.org/ns/solid/interop#registeredAgent': appUri
@@ -32,7 +32,7 @@ module.exports = {
 
       const containerUri = await this.actions.getContainerUri({ webId: podOwner }, { parentCtx: ctx });
 
-      let filteredContainer = await this.actions.list(
+      const filteredContainer = await this.actions.list(
         {
           containerUri,
           filters: {
@@ -45,6 +45,26 @@ module.exports = {
       );
 
       return filteredContainer['ldp:contains'] && filteredContainer['ldp:contains'].length > 0 ? true : false;
+    },
+    async preferredAppForClass(ctx) {
+      const { type, podOwner } = ctx.params;
+
+      const [expandedType] = await ctx.call('jsonld.parser.expandTypes', { types: [type] });
+
+      const containerUri = await this.actions.getContainerUri({ webId: podOwner }, { parentCtx: ctx });
+
+      const filteredContainer = await this.actions.list(
+        {
+          containerUri,
+          filters: {
+            'http://activitypods.org/ns/core#preferredForClass': expandedType
+          },
+          webId: 'system'
+        },
+        { parentCtx: ctx }
+      );
+
+      return filteredContainer['ldp:contains']?.[0];
     }
   },
   hooks: {

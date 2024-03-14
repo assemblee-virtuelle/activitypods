@@ -78,6 +78,7 @@ class RedisAdapter {
         }
         const response = await fetch(id, {
           headers: {
+            Accept: 'application/ld+json',
             JsonLdContext: 'https://www.w3.org/ns/solid/oidc-context.jsonld'
           }
         });

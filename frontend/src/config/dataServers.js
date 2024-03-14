@@ -14,7 +14,8 @@ const dataServers = {
         'vcard:Location': ['/vcard/location'],
         'vcard:Individual': ['/vcard/individual'],
         'vcard:Group': ['/vcard/group'],
-        'interop:ApplicationRegistration': ['/interop/application-registration']
+        'interop:ApplicationRegistration': ['/interop/application-registration'],
+        'apods:ClassDescription': ['/apods/class-description']
       }
     },
     uploadsContainer: '/semapps/file'

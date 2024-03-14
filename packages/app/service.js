@@ -4,6 +4,7 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 const { ACTOR_TYPES } = require('@semapps/activitypub');
 const { arrayOf } = require('@semapps/ldp');
 const { interopContext } = require('@activitypods/core');
+const { ClassDescriptionService, AccessDescriptionSetService } = require('@activitypods/description');
 const AccessNeedsService = require('./services/registration/access-needs');
 const AccessNeedsGroupsService = require('./services/registration/access-needs-groups');
 const ActorsService = require('./services/registration/actors');
@@ -38,6 +39,7 @@ module.exports = {
       required: [],
       optional: []
     },
+    classDescriptions: {},
     queueServiceUrl: null
   },
   dependencies: [
@@ -68,6 +70,9 @@ module.exports = {
     this.broker.createService(AppRegistrationsService);
     this.broker.createService(DataGrantsService);
     this.broker.createService(AccessGrantsService);
+
+    this.broker.createService(AccessDescriptionSetService);
+    this.broker.createService(ClassDescriptionService);
 
     this.broker.createService(PodActivitiesWatcherService, {
       mixins: [QueueMixin(this.settings.queueServiceUrl)]
@@ -165,6 +170,38 @@ module.exports = {
       });
     } else {
       this.appActor = await this.broker.call('activitypub.actor.awaitCreateComplete', { actorUri });
+    }
+
+    for (const [type, classDescription] of Object.entries(this.settings.classDescriptions)) {
+      // Create one ClassDescription per language
+      const results = await this.broker.call('class-description.register', {
+        type,
+        appUri: this.appActor.id,
+        label: classDescription.label,
+        labelPredicate: classDescription.labelPredicate,
+        openEndpoint: classDescription.openEndpoint
+      });
+
+      for (const [locale, classDescriptionUri] of Object.entries(results)) {
+        // Attach ClassDescription to corresponding AccessDescriptionSet (create it if necessary)
+        const accessDescriptionSetUri = await this.broker.call('access-description-set.attachClassDescription', {
+          locale,
+          classDescriptionUri
+        });
+
+        // Attach the AccessDescriptionSet to the Application
+        await this.broker.call('ldp.resource.patch', {
+          resourceUri: this.appActor.id,
+          triplesToAdd: [
+            triple(
+              namedNode(this.appActor.id),
+              namedNode('http://www.w3.org/ns/solid/interop#hasAccessDescriptionSet'),
+              namedNode(accessDescriptionSetUri)
+            )
+          ],
+          webId: 'system'
+        });
+      }
     }
 
     await this.broker.call('nodeinfo.addLink', {

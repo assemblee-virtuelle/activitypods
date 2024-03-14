@@ -1,12 +1,21 @@
 const { ControlledContainerMixin } = require('@semapps/ldp');
+const { ClassDescriptionMixin } = require('@activitypods/description');
 
 module.exports = {
   name: 'profiles.contactgroup',
-  mixins: [ControlledContainerMixin],
+  mixins: [ControlledContainerMixin, ClassDescriptionMixin],
   settings: {
     // ControlledContainerMixin settings
     acceptedTypes: ['vcard:Group'],
     permissions: {},
-    newResourcesPermissions: {}
+    newResourcesPermissions: {},
+    // ClassDescriptionMixin settings
+    classDescription: {
+      label: {
+        en: 'Groups',
+        fr: 'Groupes'
+      },
+      labelPredicate: 'vcard:label'
+    }
   }
 };

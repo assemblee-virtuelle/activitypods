@@ -28,6 +28,9 @@ module.exports = {
               // If a string is provided, we have a special access need (e.g. apods:ReadInbox)
               specialRights.push(accessNeed);
             } else {
+              const registeredClassFullUri = await ctx.call('jsonld.parser.expandTypes', {
+                types: [accessNeed.registeredClass]
+              });
               accessNeedsUris.push(
                 await ctx.call('access-needs.post', {
                   resource: {
@@ -36,7 +39,7 @@ module.exports = {
                     'interop:accessNecessity':
                       necessity === 'required' ? 'interop:AccessRequired' : 'interop:AccessOptional',
                     'interop:accessMode': accessNeed.accessMode,
-                    'apods:registeredClass': accessNeed.registeredClass
+                    'apods:registeredClass': registeredClassFullUri
                   },
                   contentType: MIME_TYPES.JSON,
                   webId: 'system'
