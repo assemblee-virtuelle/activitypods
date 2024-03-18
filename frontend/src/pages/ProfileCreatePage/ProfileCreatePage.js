@@ -13,13 +13,11 @@ const ProfileCreatePage = () => {
 
   const redirectPath = useMemo(() => {
     const redirectUrl = searchParams.get('redirect');
-    if (!redirectUrl) {
-      return '/';
-    } else if (redirectUrl.startsWith('/')) {
-      return redirectUrl;
-    } else if (redirectUrl.startsWith('http')) {
-      return '/authorize?redirect=' + encodeURIComponent(redirectUrl);
+    const clientId = searchParams.get('client_id');
+    if (clientId) {
+      return `/authorize?redirect=${encodeURIComponent(redirectUrl)}&client_id=${encodeURIComponent(clientId)}`;
     }
+    return redirectUrl || '/';
   }, [searchParams]);
 
   // Reload profile unless profile is created

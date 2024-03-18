@@ -1,0 +1,59 @@
+{
+  "name": "app-frontend",
+  "version": "1.1.0",
+  "private": true,
+  "dependencies": {
+    "@mui/styles": "^5.0.2",
+    "@semapps/activitypub-components": "0.6.0-alpha.5",
+    "@semapps/auth-provider": "0.6.0-alpha.5",
+    "@semapps/date-components": "^0.6.0-alpha.5",
+    "@semapps/field-components": "0.6.0-alpha.5",
+    "@semapps/geo-components": "0.6.0-alpha.5",
+    "@semapps/input-components": "0.6.0-alpha.5",
+    "@semapps/list-components": "0.6.0-alpha.5",
+    "@semapps/semantic-data-provider": "0.6.0-alpha.5",
+    "leaflet": "^1.8.0",
+    "leaflet-defaulticon-compatibility": "^0.1.1",
+    "leaflet.markercluster": "^1.5.3",
+    "oauth4webapi": "^2.3.0",
+    "ra-language-english": "^4.11.0",
+    "ra-language-french": "^4.11.0",
+    "react": "^18.2.0",
+    "react-admin": "^4.11.0",
+    "react-copy-to-clipboard": "^5.0.4",
+    "react-dom": "^18.2.0",
+    "react-sticky-box": "^0.9.3",
+    "speakingurl": "^14.0.1"
+  },
+  "devDependencies": {
+    "prettier": "^2.3.2",
+    "react-scripts": "3.4.0",
+    "yalc": "1.0.0-pre.53"
+  },
+  "scripts": {
+    "start": "export NODE_OPTIONS=--openssl-legacy-provider && react-scripts start",
+    "build": "export NODE_OPTIONS=--openssl-legacy-provider && react-scripts build",
+    "eject": "react-scripts eject",
+    "prettier": "prettier --single-quote --print-width 120 --write '**/*.js'",
+    "link-semapps-packages": "yalc link @semapps/activitypub-components @semapps/auth-provider @semapps/date-components @semapps/field-components @semapps/geo-components @semapps/input-components @semapps/list-components @semapps/markdown-components @semapps/semantic-data-provider",
+    "unlink-semapps-packages": "yalc remove --all && rm -rf node_modules/@semapps && yarn install --force"
+  },
+  "eslintConfig": {
+    "extends": "react-app",
+    "overrides": [
+      {
+        "files": [
+          "**/*.js"
+        ],
+        "rules": {
+          "jsx-a11y/anchor-is-valid": "off"
+        }
+      }
+    ]
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ]
+}

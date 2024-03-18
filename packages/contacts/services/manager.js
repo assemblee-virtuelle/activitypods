@@ -6,7 +6,7 @@ const { REMOVE_CONTACT, IGNORE_CONTACT, UNDO_IGNORE_CONTACT, OFFER_DELETE_ACTOR 
 module.exports = {
   name: 'contacts.manager',
   mixins: [ActivitiesHandlerMixin],
-  dependencies: ['activitypub.registry', 'activity-mapping', 'webacl'],
+  dependencies: ['activitypub.registry', 'webacl'],
 
   async started() {
     await this.broker.call('activitypub.registry.register', {

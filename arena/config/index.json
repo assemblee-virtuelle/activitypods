@@ -1,0 +1,39 @@
+{
+  "queues": [
+    {
+      "name": "sendMail",
+      "hostId": "pod-provider",
+      "host": "redis",
+      "port": 6379,
+      "db": 4
+    },
+    {
+      "name": "remotePost",
+      "hostId": "pod-provider",
+      "host": "redis",
+      "port": 6379,
+      "db": 4
+    },
+    {
+      "name": "localPost",
+      "hostId": "pod-provider",
+      "host": "redis",
+      "port": 6379,
+      "db": 4
+    },
+    {
+      "name": "webhookPost",
+      "hostId": "pod-provider",
+      "host": "redis",
+      "port": 6379,
+      "db": 4
+    },
+    {
+      "name": "registerListener",
+      "hostId": "app-boilerplate",
+      "host": "redis",
+      "port": 6379,
+      "db": 1
+    }
+  ]
+}

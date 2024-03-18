@@ -4,8 +4,16 @@
   "description": "ActivityPods core services",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
+  "homepage": "https://activitypods.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/assemblee-virtuelle/activitypods.git",
+    "directory": "packages/core"
+  },
   "dependencies": {
     "@activitypods/announcer": "1.1.0",
+    "@activitypods/ontologies": "1.1.0",
+    "@activitypods/solid-notifications": "1.1.0",
     "@semapps/activitypub": "0.6.0-alpha.8",
     "@semapps/auth": "0.6.0-alpha.8",
     "@semapps/jsonld": "0.6.0-alpha.8",
@@ -20,9 +28,14 @@
     "@semapps/webacl": "0.6.0-alpha.8",
     "@semapps/webfinger": "0.6.0-alpha.8",
     "@semapps/webid": "0.6.0-alpha.8",
+    "handlebars": "^4.7.7",
+    "ioredis": "^4.0.0",
+    "jose": "^5.1.1",
+    "lodash": "4.17.21",
     "moleculer": "^0.14.19",
     "moleculer-web": "^0.10.0-beta1",
     "node-fetch": "^2.6.6",
+    "oidc-provider": "^8.4.1",
     "url-join": "^4.0.1"
   },
   "publishConfig": {

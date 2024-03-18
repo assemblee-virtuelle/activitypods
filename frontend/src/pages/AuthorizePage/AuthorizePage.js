@@ -1,23 +1,29 @@
 import React, { useEffect } from 'react';
-import { useGetIdentity } from 'react-admin';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material';
 import AuthorizePageView from './AuthorizePageView';
 import theme from '../../config/theme';
 
 const AuthorizePage = () => {
-  const { data: identity } = useGetIdentity();
   const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirect');
+  const clientId = searchParams.get('client_id');
   const navigate = useNavigate();
 
-  // If the redirection is a local page, skip this page
+  // If no clientId is provided, we are not connecting to an application so we can skip this screen
+  // This happens when we go through the signup process (the ProfileCreatePage redirects here)
   useEffect(() => {
-    if (!searchParams.has('redirect') || !searchParams.get('redirect').startsWith('http')) {
-      navigate(searchParams.get('redirect') || '/');
+    if (!clientId) {
+      if (redirectTo && redirectTo.startsWith('http')) {
+        window.location.href = redirectTo;
+      } else {
+        navigate(redirectTo || '/');
+      }
     }
-  }, [navigate, searchParams]);
+  }, [navigate, clientId, redirectTo]);
 
-  if (!identity || !searchParams.get('redirect').startsWith('http')) return null;
+  if (!clientId) return null;
+
   return (
     <ThemeProvider theme={theme}>
       <AuthorizePageView />

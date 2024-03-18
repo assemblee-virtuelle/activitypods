@@ -1,0 +1,28 @@
+{
+  "prefix": "oidc",
+  "namespace": "http://www.w3.org/ns/solid/oidc#",
+  "jsonldContext": {
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "oidc:client_uri": {
+      "@type": "@id"
+    },
+    "oidc:logo_uri": {
+      "@type": "@id"
+    },
+    "oidc:policy_uri": {
+      "@type": "@id"
+    },
+    "oidc:tos_uri": {
+      "@type": "@id"
+    },
+    "oidc:redirect_uris": {
+      "@type": "@id"
+    },
+    "oidc:require_auth_time": {
+      "@type": "xsd:boolean"
+    },
+    "oidc:default_max_age": {
+      "@type": "xsd:integer"
+    }
+  }
+}

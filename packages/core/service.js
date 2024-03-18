@@ -1,21 +1,13 @@
 const path = require('path');
 const urlJoin = require('url-join');
-const { ActivityPubService, ActivityMappingService, ACTOR_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
+const QueueService = require('moleculer-bull');
+const { ActivityPubService, ACTOR_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
 const { AuthLocalService, AuthOIDCService } = require('@semapps/auth');
 const { JsonLdService } = require('@semapps/jsonld');
 const { LdpService, DocumentTaggerMixin } = require('@semapps/ldp');
-const {
-  OntologiesService,
-  apods,
-  interop,
-  oidc,
-  dc,
-  syreen,
-  mp,
-  pair,
-  void: voidOntology
-} = require('@semapps/ontologies');
+const { OntologiesService, dc, syreen, mp, pair, void: voidOntology } = require('@semapps/ontologies');
 const { PodService } = require('@semapps/pod');
+const { NodeinfoService } = require('@semapps/nodeinfo');
 const { SignatureService, ProxyService } = require('@semapps/signature');
 const { SynchronizerService } = require('@semapps/sync');
 const { SparqlEndpointService } = require('@semapps/sparql-endpoint');
@@ -23,9 +15,16 @@ const { TripleStoreService } = require('@semapps/triplestore');
 const { WebAclService } = require('@semapps/webacl');
 const { WebfingerService } = require('@semapps/webfinger');
 const { WebIdService } = require('@semapps/webid');
+const { NotificationProviderService } = require('@activitypods/solid-notifications');
+const { apods, interop, notify, oidc } = require('@activitypods/ontologies');
 const ApiService = require('./services/api');
-const FrontAppsService = require('./services/front-apps');
-const containers = require('./config/containers');
+const AppOpenerService = require('./services/app-opener');
+const FilesService = require('./services/files');
+const InstallationService = require('./services/installation');
+const JWKService = require('./services/jwk');
+const OidcProviderService = require('./services/oidc-provider/oidc-provider');
+const MailNotificationsService = require('./services/mail-notifications');
+const packageDesc = require('./package.json');
 
 const CoreService = {
   name: 'core',
@@ -40,15 +39,38 @@ const CoreService = {
     },
     settingsDataset: 'settings',
     queueServiceUrl: null,
-    authType: 'local'
+    authType: 'local',
+    oidcProvider: {
+      redisUrl: null,
+      cookieSecret: 'COOKIE-SECRET'
+    },
+    notifications: {
+      mail: {
+        // See moleculer-mail doc https://github.com/moleculerjs/moleculer-addons/tree/master/packages/moleculer-mail
+        from: null,
+        transport: null,
+        data: {
+          color: '#E2003B'
+        }
+      }
+    }
   },
   created() {
-    let { baseUrl, baseDir, frontendUrl, triplestore, settingsDataset, queueServiceUrl, authType } = this.settings;
+    let {
+      baseUrl,
+      baseDir,
+      frontendUrl,
+      triplestore,
+      settingsDataset,
+      queueServiceUrl,
+      authType,
+      oidcProvider,
+      notifications
+    } = this.settings;
 
     this.broker.createService(ActivityPubService, {
       settings: {
         baseUri: baseUrl,
-        containers,
         podProvider: true,
         dispatch: {
           queueServiceUrl
@@ -72,8 +94,7 @@ const CoreService = {
         baseUrl,
         jwtPath: path.resolve(baseDir, './jwt'),
         reservedUsernames: ['sparql', 'auth', 'common', 'data', 'settings', 'localData', 'testData'],
-        webIdSelection: ['nick'],
-        accountSelection: ['preferredLocale'],
+        webIdSelection: ['nick', 'schema:knowsLanguage'],
         formUrl: frontendUrl ? urlJoin(frontendUrl, 'login') : undefined,
         accountsDataset: settingsDataset,
         podProvider: true,
@@ -95,7 +116,7 @@ const CoreService = {
 
     this.broker.createService(OntologiesService, {
       settings: {
-        ontologies: [apods, interop, oidc, dc, syreen, mp, pair, voidOntology],
+        ontologies: [apods, interop, notify, oidc, dc, syreen, mp, pair, voidOntology],
         persistRegistry: false,
         settingsDataset
       }
@@ -106,8 +127,7 @@ const CoreService = {
       settings: {
         baseUrl,
         podProvider: true,
-        containers,
-        resourcesWithContainerPath: true, // TODO try to set to false
+        resourcesWithContainerPath: false,
         defaultContainerOptions: {
           permissions: {},
           newResourcesPermissions: {}
@@ -118,17 +138,6 @@ const CoreService = {
     this.broker.createService(PodService, {
       settings: {
         baseUrl
-      }
-    });
-
-    // Required for notifications
-    this.broker.createService(ActivityMappingService, {
-      settings: {
-        handlebars: {
-          helpers: {
-            encodeUri: uri => encodeURIComponent(uri)
-          }
-        }
       }
     });
 
@@ -196,10 +205,73 @@ const CoreService = {
       }
     });
 
-    this.broker.createService(FrontAppsService, {
+    this.broker.createService(InstallationService);
+
+    this.broker.createService(AppOpenerService, {
+      settings: {
+        frontendUrl
+      }
+    });
+
+    this.broker.createService(FilesService);
+
+    this.broker.createService(JWKService, {
+      settings: {
+        jwtPath: path.resolve(baseDir, './jwt')
+      }
+    });
+
+    this.broker.createService(OidcProviderService, {
       settings: {
         baseUrl,
-        frontendUrl
+        frontendUrl,
+        ...oidcProvider
+      }
+    });
+
+    this.broker.createService(NotificationProviderService, {
+      settings: {
+        baseUrl,
+        queueServiceUrl
+      }
+    });
+
+    this.broker.createService(MailNotificationsService, {
+      mixins: queueServiceUrl ? [QueueService(queueServiceUrl)] : undefined,
+      settings: {
+        frontendUrl,
+        ...notifications.mail
+      }
+    });
+
+    this.broker.createService(NodeinfoService, {
+      settings: {
+        baseUrl,
+        software: {
+          name: 'activitypods',
+          version: packageDesc.version,
+          repository: packageDesc.repository?.url,
+          homepage: packageDesc.homepage
+        },
+        protocols: ['activitypub'],
+        metadata: {
+          frontend_url: frontendUrl,
+          login_url: frontendUrl && urlJoin(frontendUrl, 'login'),
+          signup_url: frontendUrl && urlJoin(frontendUrl, 'login?signup=true'),
+          logout_url: frontendUrl && urlJoin(frontendUrl, 'login?logout=true'),
+          resource_url: frontendUrl && urlJoin(frontendUrl, 'r')
+        }
+      },
+      actions: {
+        async getUsersCount(ctx) {
+          const pods = await ctx.call('pod.list');
+          const totalPods = pods.length;
+          return {
+            total: totalPods,
+            activeHalfYear: totalPods,
+            activeMonth: totalPods
+          };
+        }
       }
     });
   }

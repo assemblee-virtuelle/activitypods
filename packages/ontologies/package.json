@@ -1,0 +1,16 @@
+{
+  "name": "@activitypods/ontologies",
+  "version": "1.1.0",
+  "description": "ActivityPods ontologies",
+  "license": "Apache-2.0",
+  "author": "Virtual Assembly",
+  "homepage": "https://activitypods.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/assemblee-virtuelle/activitypods.git",
+    "directory": "packages/core"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

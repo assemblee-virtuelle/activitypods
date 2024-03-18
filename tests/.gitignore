@@ -4,3 +4,4 @@
 /actors/*.key.pub
 /jwt/*.key
 /jwt/*.key.pub
+/logs

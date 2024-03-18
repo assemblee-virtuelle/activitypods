@@ -16,6 +16,10 @@ module.exports = {
     },
     queueServiceUrl: CONFIG.QUEUE_SERVICE_URL,
     authType: CONFIG.AUTH_TYPE,
+    oidcProvider: {
+      redisUrl: CONFIG.REDIS_OIDC_PROVIDER_URL,
+      cookieSecret: CONFIG.COOKIE_SECRET
+    },
     auth: {
       reservedUsernames: CONFIG.AUTH_RESERVED_USER_NAMES,
       accountsDataset: CONFIG.AUTH_ACCOUNTS_DATASET,
@@ -28,6 +32,15 @@ module.exports = {
         defaults: {
           locale: CONFIG.DEFAULT_LOCALE,
           frontUrl: CONFIG.FRONTEND_URL
+        }
+      }
+    },
+    notifications: {
+      mail: {
+        from: `${CONFIG.FROM_NAME} <${CONFIG.FROM_EMAIL}>`,
+        transport,
+        data: {
+          color: CONFIG.FRONTEND_COLOR
         }
       }
     },

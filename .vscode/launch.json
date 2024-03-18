@@ -1,0 +1,48 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Pod provider backend",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run-script", "dev"],
+      "runtimeVersion": "20.9.0",
+      "skipFiles": ["<node_internals>/**"],
+      "cwd": "${workspaceFolder}/backend"
+    },
+    {
+      "name": "Pod provider frontend",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run-script", "start"],
+      "runtimeVersion": "20.9.0",
+      "skipFiles": ["<node_internals>/**"],
+      "cwd": "${workspaceFolder}/frontend"
+    },
+    {
+      "name": "App boilerplate backend",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run-script", "dev"],
+      "runtimeVersion": "20.9.0",
+      "skipFiles": ["<node_internals>/**"],
+      "cwd": "${workspaceFolder}/app-boilerplate/backend"
+    },
+    {
+      "name": "App boilerplate frontend",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run-script", "start"],
+      "runtimeVersion": "20.9.0",
+      "skipFiles": ["<node_internals>/**"],
+      "cwd": "${workspaceFolder}/app-boilerplate/frontend"
+    }
+  ]
+}

@@ -5,7 +5,6 @@ module.exports = {
   name: 'profiles.location',
   mixins: [ControlledContainerMixin],
   settings: {
-    path: '/locations',
     acceptedTypes: ['vcard:Location'],
     excludeFromMirror: true,
     permissions: {},

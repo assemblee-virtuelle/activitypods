@@ -55,6 +55,11 @@
     "url": "http://purl.org/dc/terms/"
   },
   {
+    "prefix": "interop",
+    "owl": "",
+    "url": "http://www.w3.org/ns/solid/interop#"
+  },
+  {
     "prefix": "semapps",
     "owl": "",
     "url": "http://semapps.org/ns/core#"

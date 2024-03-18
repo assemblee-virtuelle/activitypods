@@ -76,7 +76,7 @@ const BottomBar = () => {
             value="apps"
             icon={<AppsIcon />}
             component={Link}
-            to="/App"
+            to="/AppRegistration"
             classes={{ selected: classes.selected }}
           />
           <BottomNavigationAction

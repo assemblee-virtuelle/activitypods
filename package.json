@@ -18,6 +18,7 @@
   "workspaces": [
     "backend",
     "packages/*",
-    "tests"
+    "tests",
+    "app-boilerplate/backend"
   ]
 }

@@ -28,7 +28,7 @@ const LoginPage = () => (
     allowUsername
     postSignupRedirect="/initialize"
     postLoginRedirect="/authorize"
-    additionalSignupValues={{ preferredLocale: process.env.REACT_APP_LANG }}
+    additionalSignupValues={{ 'schema:knowsLanguage': process.env.REACT_APP_LANG }}
     passwordScorer={scorer}
   />
 );

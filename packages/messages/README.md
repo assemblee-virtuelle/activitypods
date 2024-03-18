@@ -12,7 +12,7 @@ An [ActivityPods](../../README.md) app to handle messages.
 
 ## Containers
 
-- `/notes` with the messages sent by the user
+- `/as/note` with the messages sent by the user
 
 ## Handled activities
 

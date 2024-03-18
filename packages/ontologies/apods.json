@@ -1,0 +1,58 @@
+{
+  "prefix": "apods",
+  "namespace": "http://activitypods.org/ns/core#",
+  "jsonldContext": {
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "apods:closingTime": {
+      "@type": "xsd:dateTime"
+    },
+    "apods:hasFormat": {
+      "@type": "@id"
+    },
+    "apods:hasStatus": {
+      "@type": "@id"
+    },
+    "apods:contacts": {
+      "@type": "@id"
+    },
+    "apods:contactRequests": {
+      "@type": "@id"
+    },
+    "apods:ignoredContacts": {
+      "@type": "@id"
+    },
+    "apods:rejectedContacts": {
+      "@type": "@id"
+    },
+    "apods:announces": {
+      "@type": "@id"
+    },
+    "apods:announcers": {
+      "@type": "@id"
+    },
+    "apods:attendees": {
+      "@type": "@id"
+    },
+    "apods:preferredForTypes": {
+      "@type": "@id"
+    },
+    "apods:application": {
+      "@type": "@id"
+    },
+    "apods:hasSpecialRights": {
+      "@type": "@id"
+    },
+    "apods:acceptedAccessNeeds": {
+      "@type": "@id"
+    },
+    "apods:acceptedSpecialRights": {
+      "@type": "@id"
+    },
+    "apods:registeredClass": {
+      "@type": "@id"
+    },
+    "apods:registeredContainer": {
+      "@type": "@id"
+    }
+  }
+}

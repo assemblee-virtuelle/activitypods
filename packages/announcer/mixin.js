@@ -5,19 +5,19 @@ const AnnouncerMixin = {
   settings: {
     notificationMapping: defaultMapping
   },
-  dependencies: ['announcer', 'activity-mapping'],
+  dependencies: ['announcer'],
   async started() {
     await this.broker.call('announcer.watch', { types: this.settings.acceptedTypes });
 
-    await this.broker.call('activity-mapping.addMapper', {
-      match: {
-        type: ACTIVITY_TYPES.ANNOUNCE,
-        object: {
-          type: this.settings.acceptedTypes
-        }
-      },
-      mapping: this.settings.notificationMapping
-    });
+    // await this.broker.call('activity-mapping.addMapper', {
+    //   match: {
+    //     type: ACTIVITY_TYPES.ANNOUNCE,
+    //     object: {
+    //       type: this.settings.acceptedTypes
+    //     }
+    //   },
+    //   mapping: this.settings.notificationMapping
+    // });
   },
   hooks: {
     after: {

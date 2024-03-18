@@ -1,0 +1,20 @@
+{
+  "name": "@activitypods/solid-notifications",
+  "version": "1.1.0",
+  "description": "ActivityPods package for Solid notifications",
+  "license": "Apache-2.0",
+  "author": "Virtual Assembly",
+  "homepage": "https://activitypods.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/assemblee-virtuelle/activitypods.git",
+    "directory": "packages/core"
+  },
+  "dependencies": {
+    "http-link-header": "^1.1.1",
+    "uuid": "^9.0.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

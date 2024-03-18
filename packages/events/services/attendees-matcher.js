@@ -13,7 +13,6 @@ module.exports = {
       mapping: POST_EVENT_CONTACT_REQUEST_MAPPING,
       priority: 2 // Before regular contact requests
     });
-
     await this.broker.call('activity-mapping.addMapper', {
       match: POST_EVENT_ACCEPT_CONTACT_REQUEST,
       mapping: false, // Ignore activity

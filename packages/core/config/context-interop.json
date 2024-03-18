@@ -1,0 +1,102 @@
+{
+  "interop": "http://www.w3.org/ns/solid/interop#",
+  "oidc": "http://www.w3.org/ns/solid/oidc#",
+  "acl": "http://www.w3.org/ns/auth/acl#",
+  "apods": "http://activitypods.org/ns/core#",
+  "ldp": "http://www.w3.org/ns/ldp#",
+  "dc": "http://purl.org/dc/terms/",
+  "xsd": "http://www.w3.org/2001/XMLSchema#",
+  "interop:accessNecessity": {
+    "@type": "@id"
+  },
+  "interop:accessMode": {
+    "@type": "@id"
+  },
+  "interop:accessScenario": {
+    "@type": "@id"
+  },
+  "interop:applicationAuthor": {
+    "@type": "@id"
+  },
+  "interop:authenticatedAs": {
+    "@type": "@id"
+  },
+  "interop:dataOwner": {
+    "@type": "@id"
+  },
+  "interop:grantedAt": {
+    "@type": "xsd:dateTime"
+  },
+  "interop:grantedBy": {
+    "@type": "@id"
+  },
+  "interop:grantee": {
+    "@type": "@id"
+  },
+  "interop:hasAccessGrant": {
+    "@type": "@id"
+  },
+  "interop:hasAccessNeed": {
+    "@type": "@id"
+  },
+  "interop:hasAccessNeedGroup": {
+    "@type": "@id"
+  },
+  "interop:hasDataGrant": {
+    "@type": "@id"
+  },
+  "interop:satisfiesAccessNeed": {
+    "@type": "@id"
+  },
+  "interop:scopeOfGrant": {
+    "@type": "@id"
+  },
+  "interop:registeredAgent": {
+    "@type": "@id"
+  },
+  "interop:registeredAt": {
+    "@type": "xsd:dateTime"
+  },
+  "interop:registeredBy": {
+    "@type": "@id"
+  },
+  "interop:updatedAt": {
+    "@type": "@id"
+  },
+  "oidc:client_uri": {
+    "@type": "@id"
+  },
+  "oidc:logo_uri": {
+    "@type": "@id"
+  },
+  "oidc:policy_uri": {
+    "@type": "@id"
+  },
+  "oidc:tos_uri": {
+    "@type": "@id"
+  },
+  "oidc:redirect_uris": {
+    "@type": "@id"
+  },
+  "oidc:require_auth_time": {
+    "@type": "xsd:boolean"
+  },
+  "oidc:default_max_age": {
+    "@type": "xsd:integer"
+  },
+  "apods:hasSpecialRights": {
+    "@type": "@id"
+  },
+  "apods:acceptedAccessNeeds": {
+    "@type": "@id"
+  },
+  "apods:acceptedSpecialRights": {
+    "@type": "@id"
+  },
+  "apods:registeredClass": {
+    "@type": "@id"
+  },
+  "apods:registeredContainer": {
+    "@type": "@id"
+  }
+}

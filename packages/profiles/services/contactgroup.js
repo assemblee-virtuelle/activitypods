@@ -5,7 +5,6 @@ module.exports = {
   mixins: [ControlledContainerMixin],
   settings: {
     // ControlledContainerMixin settings
-    path: '/groups',
     acceptedTypes: ['vcard:Group'],
     permissions: {},
     newResourcesPermissions: {}

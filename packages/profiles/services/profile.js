@@ -9,7 +9,7 @@ module.exports = {
   settings: {
     publicProfile: false,
     // ControlledContainerMixin settings
-    path: '/profiles',
+    path: '/vcard/individual',
     acceptedTypes: ['vcard:Individual', OBJECT_TYPES.PROFILE],
     permissions: {},
     newResourcesPermissions: {}

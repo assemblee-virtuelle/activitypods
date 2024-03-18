@@ -20,6 +20,11 @@
     "url": "http://www.w3.org/2006/vcard/ns#"
   },
   {
+    "prefix": "oidc",
+    "owl": "",
+    "url": "http://www.w3.org/ns/solid/oidc#"
+  },
+  {
     "prefix": "xsd",
     "owl": "",
     "url": "http://www.w3.org/2001/XMLSchema#"
@@ -53,6 +58,11 @@
     "prefix": "dc",
     "owl": "",
     "url": "http://purl.org/dc/terms/"
+  },
+  {
+    "prefix": "interop",
+    "owl": "",
+    "url": "http://www.w3.org/ns/solid/interop#"
   },
   {
     "prefix": "semapps",

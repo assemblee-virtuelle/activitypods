@@ -12,8 +12,6 @@
     "@activitypods/announcer": "1.1.0",
     "@activitypods/contacts": "1.1.0",
     "@activitypods/core": "1.1.0",
-    "@activitypods/events": "1.1.0",
-    "@activitypods/marketplace": "1.1.0",
     "@activitypods/messages": "1.1.0",
     "@activitypods/profiles": "1.1.0",
     "@semapps/notifications": "0.6.0-alpha.8",
@@ -30,5 +28,8 @@
   "devDependencies": {
     "jest": "^27.4.0",
     "wait-for-expect": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

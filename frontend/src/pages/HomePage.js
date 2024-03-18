@@ -83,12 +83,14 @@ const HomePage = () => {
   const xs = useMediaQuery(() => theme.breakpoints.down('sm'), { noSsr: true });
 
   useEffect(() => {
-    if (identity?.id) {
+    if (!isLoading && identity?.id) {
       redirect('/Profile');
     }
-  }, [redirect, identity]);
+  }, [redirect, isLoading, identity]);
 
-  if (isLoading) return null;
+  if (isLoading || identity?.id) return null;
+
+  console.log('isLoading', isLoading, identity);
 
   return (
     <ThemeProvider theme={theme}>

@@ -7,6 +7,7 @@
     "syreen": "http://syreen.fr/ns/core#",
 
     "as": "https://www.w3.org/ns/activitystreams#",
+    "interop": "http://www.w3.org/ns/solid/interop#",
     "acl": "http://www.w3.org/ns/auth/acl#",
     "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",

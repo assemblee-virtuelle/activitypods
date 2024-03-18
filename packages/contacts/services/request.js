@@ -18,7 +18,7 @@ const {
 module.exports = {
   name: 'contacts.request',
   mixins: [ActivitiesHandlerMixin],
-  dependencies: ['activitypub.registry', 'activity-mapping', 'webacl'],
+  dependencies: ['activitypub.registry', 'webacl'],
   async started() {
     await this.broker.call('activitypub.registry.register', {
       path: '/contacts',
@@ -45,38 +45,38 @@ module.exports = {
     });
 
     // Notify on contact requests (unless it's by an invite link capability).
-    await this.broker.call('activity-mapping.addMapper', {
-      match: async (ctx, activity) => {
-        if (activityHasInviteCapability(activity)) {
-          return false;
-        }
+    // await this.broker.call('activity-mapping.addMapper', {
+    //   match: async (ctx, activity) => {
+    //     if (activityHasInviteCapability(activity)) {
+    //       return false;
+    //     }
 
-        return !!(await matchActivity(ctx, CONTACT_REQUEST, activity));
-      },
-      mapping: CONTACT_REQUEST_MAPPING
-    });
+    //     return !!(await matchActivity(ctx, CONTACT_REQUEST, activity));
+    //   },
+    //   mapping: CONTACT_REQUEST_MAPPING
+    // });
 
     // Notify on auto-accepted invites (by invite link capability).
-    await this.broker.call('activity-mapping.addMapper', {
-      match: async (ctx, activity) => {
-        if (!activityHasInviteCapability(activity)) {
-          return false;
-        }
-        return await matchActivity(ctx, CONTACT_REQUEST, activity);
-      },
-      mapping: CONTACT_REQUEST_BY_INVITE_LINK_MAPPING
-    });
+    // await this.broker.call('activity-mapping.addMapper', {
+    //   match: async (ctx, activity) => {
+    //     if (!activityHasInviteCapability(activity)) {
+    //       return false;
+    //     }
+    //     return await matchActivity(ctx, CONTACT_REQUEST, activity);
+    //   },
+    //   mapping: CONTACT_REQUEST_BY_INVITE_LINK_MAPPING
+    // });
 
     // Notify on accepted contact requests (unless auto-accepted by invite link capability).
-    await this.broker.call('activity-mapping.addMapper', {
-      match: async (ctx, activity) => {
-        if (activityHasInviteCapability(activity)) {
-          return false;
-        }
-        return await matchActivity(ctx, ACCEPT_CONTACT_REQUEST, activity);
-      },
-      mapping: ACCEPT_CONTACT_REQUEST_MAPPING
-    });
+    // await this.broker.call('activity-mapping.addMapper', {
+    //   match: async (ctx, activity) => {
+    //     if (activityHasInviteCapability(activity)) {
+    //       return false;
+    //     }
+    //     return await matchActivity(ctx, ACCEPT_CONTACT_REQUEST, activity);
+    //   },
+    //   mapping: ACCEPT_CONTACT_REQUEST_MAPPING
+    // });
   },
   activities: {
     contactRequest: {
@@ -193,7 +193,7 @@ module.exports = {
 
         // 3. Attach the other actor's profile to my profiles container
         await ctx.call('ldp.container.attach', {
-          containerUri: urlJoin(emitterUri, 'data', 'profiles'),
+          containerUri: urlJoin(emitterUri, 'data', 'vcard', 'individual'),
           resourceUri: activity.object.object.object.id,
           webId: emitterUri
         });
@@ -222,7 +222,7 @@ module.exports = {
 
         // Attach the other actor's profile to my profiles container
         await ctx.call('ldp.container.attach', {
-          containerUri: urlJoin(recipientUri, 'data', 'profiles'),
+          containerUri: urlJoin(recipientUri, 'data', 'vcard', 'individual'),
           resourceUri: emitter.url,
           webId: recipientUri
         });

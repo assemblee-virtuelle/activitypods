@@ -69,6 +69,21 @@ module.exports = {
       addresses: 'Mes adresses',
       address: '%{smart_count} adresse |||| %{smart_count} adresses'
     },
+    authorization: {
+      required: 'Accès requis',
+      optional: 'Accès optionnel',
+      access_resources_of_type: '%{access_right} les ressources de type %{type}',
+      read: 'Lire',
+      append: 'Enrichir',
+      write: 'Écrire',
+      control: 'Administrer',
+      read_inbox: 'Lire ma boîte de réception',
+      read_outbox: "Lire ma boîte d'envoi",
+      post_outbox: "Poster dans ma boîte d'envoi",
+      send_notification: "M'envoyer des notifications",
+      query_sparql_endpoint: 'Rechercher mes données',
+      create_acl_group: 'Créer un groupe de permissions'
+    },
     card: {
       add_contact: 'Ajouter un contact',
       contact_requests: 'Demandes de contact',
@@ -129,6 +144,7 @@ module.exports = {
       you_participated_to_same_event: 'Vous avez participé à la même rencontre',
       verified_app: 'Application vérifiée',
       verified: 'Vérifiée',
+      no_app_registration: 'Aucune application installée',
       connection_successful: 'Vous êtes maintenant connecté !'
     },
     notification: {
@@ -152,6 +168,7 @@ module.exports = {
       get_settings_error: "Une erreur s'est produite",
       update_settings_error: "Une erreur s'est produite",
       verified_applications_load_failed: 'Impossible de charger la liste des applications vérifiées',
+      app_uninstallation_in_progress: "Désinstallation de l'application en cours...",
       app_uninstalled: 'Application désinstallée',
       home_address_updated: 'Adresse du domicile mise à jour',
       home_address_deleted: 'Adresse du domicile enlevée',

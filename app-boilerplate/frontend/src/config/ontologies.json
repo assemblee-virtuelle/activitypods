@@ -1,0 +1,77 @@
+[
+  {
+    "prefix": "as",
+    "owl": "",
+    "url": "https://www.w3.org/ns/activitystreams#"
+  },
+  {
+    "prefix": "rdf",
+    "owl": "",
+    "url": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  },
+  {
+    "prefix": "rdfs",
+    "owl": "",
+    "url": "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  {
+    "prefix": "vcard",
+    "owl": "",
+    "url": "http://www.w3.org/2006/vcard/ns#"
+  },
+  {
+    "prefix": "xsd",
+    "owl": "",
+    "url": "http://www.w3.org/2001/XMLSchema#"
+  },
+  {
+    "prefix": "ldp",
+    "owl": "",
+    "url": "http://www.w3.org/ns/ldp#"
+  },
+  {
+    "prefix": "schema",
+    "owl": "",
+    "url": "http://schema.org/"
+  },
+  {
+    "prefix": "sec",
+    "owl": "",
+    "url": "https://w3id.org/security#"
+  },
+  {
+    "prefix": "skos",
+    "owl": "https://raw.githubusercontent.com/openlink/rdf-editor/develop/app/data/skos.ttl",
+    "url": "http://www.w3.org/2004/02/skos/core#"
+  },
+  {
+    "prefix": "foaf",
+    "owl": "",
+    "url": "http://xmlns.com/foaf/0.1/"
+  },
+  {
+    "prefix": "dc",
+    "owl": "",
+    "url": "http://purl.org/dc/terms/"
+  },
+  {
+    "prefix": "semapps",
+    "owl": "",
+    "url": "http://semapps.org/ns/core#"
+  },
+  {
+    "prefix": "pair",
+    "owl": "http://virtual-assembly.org/ontologies/pair-2020-winter/ontology.ttl",
+    "url": "http://virtual-assembly.org/ontologies/pair#"
+  },
+  {
+    "prefix": "mp",
+    "owl": "",
+    "url": "http://virtual-assembly.org/ontologies/pair-mp#"
+  },
+  {
+    "prefix": "apods",
+    "owl": "",
+    "url": "http://activitypods.org/ns/core#"
+  }
+]

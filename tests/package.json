@@ -3,9 +3,10 @@
   "version": "1.1.0",
   "private": true,
   "scripts": {
-    "test": "jest --detectOpenHandles --verbose"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --detectOpenHandles --verbose"
   },
   "dependencies": {
+    "@activitypods/app": "1.1.0",
     "@activitypods/contacts": "1.1.0",
     "@activitypods/core": "1.1.0",
     "@activitypods/events": "1.1.0",
@@ -22,6 +23,10 @@
   },
   "devDependencies": {
     "@types/node-fetch": "^2.6.6",
-    "jest": "^27.4.0"
+    "jest": "^27.4.0",
+    "wait-for-expect": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

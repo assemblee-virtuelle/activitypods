@@ -69,6 +69,21 @@ module.exports = {
       addresses: 'My addresses',
       address: '%{smart_count} address |||| %{smart_count} addresses'
     },
+    authorization: {
+      required: 'Required access',
+      optional: 'Optional access',
+      access_resources_of_type: '%{access_right} resources of type %{type}',
+      read: 'Read',
+      append: 'Append',
+      write: 'Write',
+      control: 'Control',
+      read_inbox: 'Read my inbox',
+      read_outbox: 'Read my outbox',
+      post_outbox: 'Post in my outbox',
+      send_notification: 'Send me notifications',
+      query_sparql_endpoint: 'Search on my data',
+      create_acl_group: 'Create permissions group'
+    },
     card: {
       add_contact: 'Add a contact',
       contact_requests: 'Contact requests',
@@ -104,7 +119,7 @@ module.exports = {
       set_new_password: 'Please enter your email address and a new password below',
       create_profile:
         'Now that your account is created, please create your profile. By default, your profile will only be visible to the people you accept into your network.',
-      authorize: 'Do you allow the website %{appDomain} to access your POD?',
+      authorize: 'To be installed, the app %{appDomain} require the following authorizations',
       invite_text_logged_out:
         "A personal data space is in some way similar to an email account; It's decentralized, so you can choose where your personal data is stored. Instead of creating a new account for every new app, you can login to compatible apps using your data space account. Apps then store your data in your data space.",
       invite_text_logged_in:
@@ -123,6 +138,7 @@ module.exports = {
       you_participated_to_same_event: 'You participated to the same event',
       verified_app: 'Verified application',
       verified: 'Verified',
+      no_app_registration: 'You have no application installed',
       connection_successful: 'You are now connected!'
     },
     notification: {
@@ -146,6 +162,7 @@ module.exports = {
       get_settings_error: 'An error occurred',
       update_settings_error: 'An error occurred',
       verified_applications_load_failed: 'Unable to load the list of verified applications',
+      app_uninstallation_in_progress: 'Application uninstallation in progress...',
       app_uninstalled: 'Application uninstalled',
       home_address_updated: 'Home address updated',
       home_address_deleted: 'Home address deleted',

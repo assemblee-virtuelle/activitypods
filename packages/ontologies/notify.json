@@ -1,0 +1,35 @@
+{
+  "prefix": "notify",
+  "namespace": "http://www.w3.org/ns/solid/notifications#",
+  "owl": "https://www.w3.org/ns/solid/notifications.ttl",
+  "jsonldContext": {
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "notify:channel": {
+      "@type": "@id"
+    },
+    "notify:endAt": {
+      "@type": "xsd:dateTime"
+    },
+    "notify:rate": {
+      "@type": "xsd:duration"
+    },
+    "notify:receiveFrom": {
+      "@type": "@id"
+    },
+    "notify:sender": {
+      "@type": "@id"
+    },
+    "notify:sendTo": {
+      "@type": "@id"
+    },
+    "notify:startAt": {
+      "@type": "xsd:dateTime"
+    },
+    "notify:subscription": {
+      "@type": "@id"
+    },
+    "notify:topic": {
+      "@type": "@id"
+    }
+  }
+}

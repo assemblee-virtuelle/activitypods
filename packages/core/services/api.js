@@ -39,18 +39,43 @@ module.exports = {
     }
   },
   methods: {
-    authenticate(ctx, route, req, res) {
+    async authenticate(ctx, route, req, res) {
       if (req.headers.signature) {
         return ctx.call('signature.authenticate', { route, req, res });
       } else {
-        return ctx.call('auth.authenticate', { route, req, res });
+        const token = req.headers.authorization?.split(' ')[1];
+        if (token) {
+          const payload = await ctx.call('auth.jwt.decodeToken', { token });
+          if (payload?.azp) {
+            // This is a OIDC provider-generated ID token
+            return ctx.call('oidc-provider.authenticate', { route, req, res });
+          } else {
+            // Otherwise it is a custom JWT token (used by ActivityPods frontend) or a capability URL
+            return ctx.call('auth.authenticate', { route, req, res });
+          }
+        }
       }
+      ctx.meta.webId = 'anon';
+      return null;
     },
-    authorize(ctx, route, req, res) {
+    async authorize(ctx, route, req, res) {
       if (req.headers.signature) {
         return ctx.call('signature.authorize', { route, req, res });
       } else {
-        return ctx.call('auth.authorize', { route, req, res });
+        const token = req.headers.authorization?.split(' ')[1];
+        if (token) {
+          const payload = await ctx.call('auth.jwt.decodeToken', { token });
+          if (payload.azp) {
+            // This is a OIDC provider-generated ID token
+            return ctx.call('oidc-provider.authorize', { route, req, res });
+          } else {
+            // Otherwise it is a custom JWT token (used by ActivityPods frontend)
+            return ctx.call('auth.authorize', { route, req, res });
+          }
+        } else {
+          ctx.meta.webId = 'anon';
+          throw new E.UnAuthorizedError(E.ERR_NO_TOKEN);
+        }
       }
     },
     // Overwrite optimization method to put catchAll routes at the end

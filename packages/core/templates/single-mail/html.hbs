@@ -1,0 +1,35 @@
+<style>
+  p { font-size: 16px; font-family: "Roboto", "Open Sans", "sans-serif"; font-weight: normal; line-height: 19px;
+  margin-top: 4px; } .greybg { display: inline-block; padding: 15px; background-color: #eaeaea; } .button {
+  border-radius: 2px; } .button a { padding: 8px 12px; border: 1px solid
+  {{color}}; background-color:
+  {{color}}; border-radius: 8px; font-family: "Roboto", "Open Sans", "sans-serif"; font-size: 14px; font-weight: bold;
+  color: white !important; text-decoration: none; display: inline-block; }
+</style>
+<body>
+  <div class='greybg'>
+    <p>
+      <em>{{title}}</em>
+    </p>
+    <p>
+      {{{contentWithBr}}}
+    </p>
+    <table width='100%' cellspacing='0' cellpadding='0'>
+      <tr>
+        <td>
+          <table cellspacing='0' cellpadding='0'>
+            <tr>
+              {{#each actions}}
+                <td class='button'>
+                  <a href='{{this.link}}' target='_blank'>
+                    {{this.caption}}
+                  </a>
+                </td>
+              {{/each}}
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+</body>
