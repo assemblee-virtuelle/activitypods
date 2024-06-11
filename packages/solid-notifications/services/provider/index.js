@@ -35,7 +35,7 @@ module.exports = {
   },
   actions: {
     discover(ctx) {
-      // TODO Handle content negociation
+      // TODO Handle content negotiation
       ctx.meta.$responseType = 'application/ld+json';
       return {
         '@context': { notify: 'http://www.w3.org/ns/solid/notifications#' },
