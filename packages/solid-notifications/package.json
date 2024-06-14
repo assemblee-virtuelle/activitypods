@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "http-link-header": "^1.1.1",
+    "moment": "2.30.1",
     "uuid": "^9.0.1",
     "ws": "^8.17.0"
   },
