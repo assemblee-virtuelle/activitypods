@@ -250,6 +250,7 @@ module.exports = {
       }
 
       // Update `lastTriggered`.
+      const now = new Date();
       channelsToTrigger.forEach(c => {
         c.lastTriggered = now;
       });
