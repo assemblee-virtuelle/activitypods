@@ -1,6 +1,7 @@
 const urlJoin = require('url-join');
 const QueueMixin = require('moleculer-bull');
-const WebhookChannelService = require('./sub-services/webhook');
+const WebhookChannelService = require('./sub-services/webhook-channel');
+const WebSocketChannelService = require('./sub-services/websocket-channel');
 
 module.exports = {
   name: 'solid-notifications.provider',
@@ -13,6 +14,9 @@ module.exports = {
     const { baseUrl, queueServiceUrl } = this.settings;
     if (!baseUrl || !queueServiceUrl) throw new Error(`The baseUrl and queueServiceUrl settings are required`);
 
+    this.broker.createService(WebSocketChannelService, {
+      settings: { baseUrl }
+    });
     this.broker.createService(WebhookChannelService, {
       mixins: [QueueMixin(queueServiceUrl)],
       settings: { baseUrl }

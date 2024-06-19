@@ -1,11 +1,5 @@
 const urlJoin = require('url-join');
 const fetch = require('node-fetch');
-const { v4: uuidV4 } = require('uuid');
-const { Errors: E } = require('moleculer-web');
-const { parseHeader, negotiateContentType, parseJson } = require('@semapps/middlewares');
-const { ControlledContainerMixin, getDatasetFromUri, arrayOf } = require('@semapps/ldp');
-const { ACTIVITY_TYPES } = require('@semapps/activitypub');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const NotificationChannelMixin = require('./notification-channel.mixin');
 
 const queueOptions =
@@ -17,20 +11,17 @@ const queueOptions =
         backoff: { type: 'exponential', delay: '180000' }
       };
 
-module.exports = {
+const WebSocketChannel2023Service = {
   name: 'solid-notifications.provider.webhook',
   mixins: [NotificationChannelMixin],
   settings: {
     channelType: 'WebhookChannel2023',
-    typePredicate: 'notify:WebhookChannel2023',
-    acceptedTypes: ['notify:WebhookChannel2023'],
-    sendOrReceive: 'send'
+    sendOrReceive: 'send',
+
+    baseUrl: null
   },
-  async created() {
-    //
-  },
-  async started() {
-    //
+  created(ctx) {
+    if (!this.createJob) throw new Error('The QueueMixin must be configured with this service');
   },
   actions: {
     async discover(ctx) {
@@ -87,14 +78,7 @@ module.exports = {
         }
       }
     }
-  },
-  hooks: {
-    after: {
-      delete(ctx, res) {
-        const { resourceUri } = ctx.params;
-        this.channels = this.channels.filter(channel => channel.id !== resourceUri);
-        return res;
-      }
-    }
   }
 };
+
+module.exports = WebSocketChannel2023Service;

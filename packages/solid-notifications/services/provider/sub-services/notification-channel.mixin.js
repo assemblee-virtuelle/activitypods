@@ -25,7 +25,7 @@ module.exports = {
   settings: {
     // Channel properties (to be overridden)
     channelType: null, // E.g. 'WebhookChannel2023',
-    typePredicate: null, // E.g. 'notify:WebhookChannel2023',
+    typePredicate: null, // E.g. 'notify:WebhookChannel2023', defaults to `nofiy:${this.settings.channelType}`,
     acceptedTypes: [], // E.g. ['notify:WebhookChannel2023'],
     sendOrReceive: null, // Either 'send' or 'receive' (will set `sendTo` or `receiveFrom` URIs).
 
@@ -45,14 +45,18 @@ module.exports = {
   dependencies: ['api', 'pod'],
   async created() {
     if (!this.settings.baseUrl) throw new Error('The baseUrl setting is required');
-    if (!this.createJob) throw new Error('The QueueMixin must be configured with this service');
+    if (this.settings.sendOrReceive !== 'receive' && this.settings.sendOrReceive !== 'send')
+      throw new Error('The setting `sendOrReceive` must be set to `send` or `receive`, depending on channelType.');
+    if (!this.settings.channelType) throw new Error('The setting channelType must be set (e.g. `WebhookChannel2023`).');
+    if (!this.settings.typePredicate) this.settings.typePredicate = `notify:${this.settings.channelType}`;
+    if (this.settings.acceptedTypes?.length <= 0) this.settings.acceptedTypes = [this.settings.typePredicate];
   },
   async started() {
     const { channelType } = this.settings;
 
     await this.broker.call('api.addRoute', {
       route: {
-        name: 'notification-webhook',
+        name: `notification-${channelType}`,
         path: `/.notifications/${channelType}`,
         bodyParsers: false,
         authorization: false,
@@ -99,11 +103,11 @@ module.exports = {
       // Correct context: https://github.com/solid/vocab/blob/main/solid-notifications-context.jsonld
       const type = ctx.params.type || ctx.params['@type'];
       const topic = ctx.params.topic || ctx.params['notify:topic'];
-      const sendTo = ctx.params.sendTo || ctx.params['notify:sendTo'];
+      const sendToParam = ctx.params.sendTo || ctx.params['notify:sendTo'];
       const { webId } = ctx.meta;
 
-      if (type !== 'notify:WebhookChannel2023')
-        throw new Error('Only notify:WebhookChannel2023 is accepted on this endpoint');
+      if (!this.settings.acceptedTypes.includes(type))
+        throw new Error(`Only one of ${this.settings.acceptedTypes} is accepted on this endpoint`);
 
       // Ensure topic exist (LDP resource, container or collection)
       const exists = await ctx.call('ldp.resource.exist', {
@@ -118,6 +122,7 @@ module.exports = {
         rights: { read: true },
         webId
       });
+      // TODO: Should a client without read rights know about the existence of that resource?
       if (!rights.read) throw new E.ForbiddenError('You need acl:Read rights on the resource');
 
       // Find container URI from topic (must be stored on same Pod)
@@ -127,6 +132,7 @@ module.exports = {
       // Create receiveFrom URI if needed (e.g. for web sockets).
       const receiveFrom =
         (this.settings.sendOrReceive === 'receive' && (await this.createReceiveFromUri(topic, webId))) || undefined;
+      const sendTo = (this.settings.sendOrReceive === 'send' && sendToParam) || undefined;
 
       // Post channel on Pod
       const channelUri = await this.actions.post(
@@ -135,7 +141,7 @@ module.exports = {
           resource: {
             type: this.settings.typePredicate,
             'notify:topic': topic,
-            'notify:sendTo': (this.settings.sendOrReceive === 'send' && sendTo) || undefined,
+            'notify:sendTo': sendTo,
             'notify:receiveFrom': receiveFrom
           },
           contentType: MIME_TYPES.JSON,

@@ -8,23 +8,23 @@ const WebSocketChannel2023Service = {
   mixins: [NotificationChannelMixin],
   settings: {
     channelType: 'WebSocketChannel2023',
-    typePredicate: 'notify:WebSocketChannel2023',
-    acceptedTypes: ['notify:WebSocketChannel2023'],
-    sendOrReceive: 'receive'
+    sendOrReceive: 'receive',
+
+    baseUrl: null
   },
 
   async started() {
     this.socketConnections = [];
 
-    this.broker.call('addWebSocketRoute', {
+    this.broker.call('api.addWebSocketRoute', {
       name: 'notification-websocket',
       route: `/.notifications/WebSocketChannel2023/socket/:id`,
       handlers: {
         /** @param {import('@activitypods/core/services/websocket/websocket.mixin').Connection} connection */
         onConnection: connection => {
           this.logger.info('onConnection', connection.requestUrl);
-          // TODO: Reject connection before this using middleware and some sort of fail thingo.
-          const channel = this.channels.find(c => c.receiveFrom === connection.params.requestUrl);
+
+          const channel = this.channels.find(c => c.receiveFrom === connection.requestUrl);
           // Check if the requested channel is registered.
           if (!channel) {
             connection.webSocket.close(4040, 'Channel not found.');
@@ -76,10 +76,16 @@ const WebSocketChannel2023Service = {
         .filter(socketConnection => socketConnection.requestUrl === channel.receiveFrom)
         .forEach(connection => connection.webSocket.send(message));
     },
-    createReceiveFromUri(topic, webId) {
+    createReceiveFromUri() {
       // Create a random URI to be registered for `receiveFrom` for a new channel under `this.channels`.
       // Web socket requests to this URI are subsequently accepted (as validated in `onConnection`).
-      return urlJoin(this.settings.baseUrl, '.notifications', 'WebSocketChannel2023', 'socket', uuidV4());
+      return urlJoin(
+        this.settings.baseUrl.replace('http', 'ws'),
+        '.notifications',
+        'WebSocketChannel2023',
+        'socket',
+        uuidV4()
+      );
     }
   }
 };
