@@ -8,6 +8,7 @@ module.exports = {
   mixins: [ApiGatewayService, WebSocketMixin],
   settings: {
     httpServerTimeout: 300000,
+    baseUrl: null,
     cors: {
       origin: '*',
       methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE', 'HEAD', 'OPTIONS'],

@@ -1,6 +1,6 @@
 const { WebSocketServer } = require('ws');
 const http = require('http');
-
+const urlJoin = require('url-join');
 /**
  * This mixin adds the ability to create WebSocket routes to the moleculer-web API Gateway.
  * The mixin adds a new action `addWebSocketRoute` to the service.
@@ -19,10 +19,13 @@ const http = require('http');
  */
 module.exports = {
   name: 'websocket',
-  settings: {},
+  settings: {
+    baseUrl: null
+  },
   created() {
     /** @type {import("./websocket.mixin").RegisteredEndpoint[]} */
     this.connections = [];
+    if (!this.settings.baseUrl) throw new Error('The websocket api mixin requires the `baseUrl` setting.');
   },
   started() {
     // Listen to upgrade requests and handle them with `upgradeHandler`.
@@ -32,6 +35,7 @@ module.exports = {
     this.server.on('upgrade', this.upgradeHandler);
   },
   actions: {
+    // TODO: support interval-based pings?
     /** See description in service comment. */
     addWebSocketRoute: {
       params: {
@@ -104,21 +108,22 @@ module.exports = {
       });
 
       // The existence of the handler indicates, we can perform a WS handshake.
-      // The call will do that and return the webSocket (`upgradeHandler`).
+      // The call will do that and return the webSocket (see method `upgradeHandler`).
       const webSocket = await request.webSocketRequestHandler();
 
       // Create a new connection object (passed to all event handlers).
+      const wsBase = this.settings.baseUrl.replace(/^http/, 'ws');
       /** @type {import("./websocket.mixin").Connection} */
       const connection = {
         server: wss,
         request,
         response,
-        // The registered route (e.g. /sockets/:foo)
-        baseUrl: request.baseUrl,
-        // The URL as requested by the client (including URL params, e.g. /sockets/bar1?p2=v2).
-        requestUrl: request.originalUrl,
-        // The parsed URL without URL params (e.g. /sockets/bar1).
-        parsedUrl: request.parsedUrl,
+        // The registered route (e.g. <wsBase>/sockets/:foo)
+        baseUrl: urlJoin(wsBase, request.baseUrl),
+        // The URL path as requested by the client (including URL params, e.g. <wsBase>/sockets/bar1?p2=v2).
+        requestUrl: urlJoin(wsBase, request.originalUrl),
+        // The parsed URL path without URL params (e.g. <wsBase>/sockets/bar1).
+        parsedUrl: urlJoin(wsBase, request.parsedUrl),
         // The context params (URL params + registered params (e.g. {foo: "bar1", p2: "v2"}))
         params: request.$params,
         webSocket,
