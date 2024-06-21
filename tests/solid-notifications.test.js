@@ -88,12 +88,12 @@ describe('Test app installation', () => {
 
     expect(webSocketChannelSubscription).toMatchObject({
       'notify:channelType': 'notify:WebSocketChannel2023',
-      'notify:features': ['notify:endAt', 'notify:rate', 'notify:startAt', 'notify:state']
+      'notify:feature': ['notify:endAt', 'notify:rate', 'notify:startAt', 'notify:state']
     });
 
     expect(webhookChannelSubscription).toMatchObject({
       'notify:channelType': 'notify:WebhookChannel2023',
-      'notify:features': ['notify:endAt', 'notify:rate', 'notify:startAt', 'notify:state']
+      'notify:feature': ['notify:endAt', 'notify:rate', 'notify:startAt', 'notify:state']
     });
   });
 

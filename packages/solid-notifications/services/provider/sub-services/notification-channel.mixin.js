@@ -85,7 +85,8 @@ module.exports = {
       const sendToParam = ctx.params.sendTo || ctx.params['notify:sendTo'];
       const { webId } = ctx.meta;
 
-      if (!this.settings.acceptedTypes.includes(type))
+      // TODO: Use ldo objects; This will only check for the json type and not parse json-ld variants...
+      if (!this.settings.acceptedTypes.includes(type) && this.settings.channelType !== type)
         throw new Error(`Only one of ${this.settings.acceptedTypes} is accepted on this endpoint`);
 
       // Ensure topic exist (LDP resource, container or collection)

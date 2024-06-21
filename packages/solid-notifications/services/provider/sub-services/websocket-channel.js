@@ -54,7 +54,7 @@ const WebSocketChannel2023Service = {
         '@context': { notify: 'http://www.w3.org/ns/solid/notifications#' },
         '@id': urlJoin(this.settings.baseUrl, '.notifications', 'WebSocketChannel2023'),
         'notify:channelType': 'notify:WebSocketChannel2023',
-        'notify:features': ['notify:endAt', 'notify:rate', 'notify:startAt', 'notify:state']
+        'notify:feature': ['notify:endAt', 'notify:rate', 'notify:startAt', 'notify:state']
       };
     }
   },
