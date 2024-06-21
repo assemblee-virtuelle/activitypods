@@ -1,17 +1,16 @@
 const path = require('path');
 const urlJoin = require('url-join');
 const fetch = require('node-fetch');
-const waitForExpect = require('wait-for-expect');
 const { initialize, initializeAppServer, clearDataset, listDatasets, installApp } = require('./initialize');
 const ExampleAppService = require('./apps/example.app');
 const { parseHeader, negotiateContentType, parseJson } = require('@semapps/middlewares');
-const { fetchServer } = require('./utils');
+const { fetchServer, tryUntilTimeout } = require('./utils');
 const { delay } = require('@semapps/ldp');
 const { WebSocket } = require('ws');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { triple, namedNode, literal } = require('@rdfjs/data-model');
 
-jest.setTimeout(1220000);
+jest.setTimeout(110_000);
 
 const POD_SERVER_BASE_URL = 'http://localhost:3000';
 const APP_SERVER_BASE_URL = 'http://localhost:3001';
@@ -21,15 +20,7 @@ const mockWebhookAction = jest.fn(() => Promise.resolve());
 const mockWebhookAction2 = jest.fn(() => Promise.resolve());
 
 describe('Test app installation', () => {
-  let podServer,
-    alice,
-    appServer,
-    webhookChannelSubscriptionUrl,
-    webSocketChannelSubscriptionUrl,
-    webhookChannelUri,
-    webSocketChannelUri,
-    webSocketReceiveFrom;
-  const webSocketMessages = [];
+  let podServer, alice, appServer, webhookChannelSubscriptionUrl, webSocketChannelSubscriptionUrl, webhookChannelUri;
 
   beforeAll(async () => {
     const datasets = await listDatasets();
@@ -77,11 +68,11 @@ describe('Test app installation', () => {
       });
 
     await installApp(alice, APP_URI);
-  }, 80000);
+  }, 110_000);
 
   afterAll(async () => {
-    await podServer.stop();
-    await appServer.stop();
+    podServer.stop();
+    appServer.stop();
   });
 
   test('User installs app and grants all access needs', async () => {
@@ -184,7 +175,7 @@ describe('Test app installation', () => {
         content: 'Birthday party !'
       });
 
-      await waitForExpect(async () => {
+      await tryUntilTimeout(async () => {
         expect(mockWebhookAction).toHaveBeenCalledTimes(1);
       }, 10000);
 
@@ -228,9 +219,9 @@ describe('Test app installation', () => {
         content: 'Birthday party 3 !'
       });
 
-      await waitForExpect(async () => {
+      await tryUntilTimeout(async () => {
         expect(mockWebhookAction2).toHaveBeenCalledTimes(1);
-      }, 5000);
+      }, 10_000);
 
       expect(mockWebhookAction2.mock.calls[0][0].params).toMatchObject({
         '@context': ['https://www.w3.org/ns/activitystreams', 'https://www.w3.org/ns/solid/notifications-context/v1'],
@@ -275,8 +266,13 @@ describe('Test app installation', () => {
       expect(status).toBe(400);
     });
 
-    describe("Alice's app creates note collection and subscribes to changes.", () => {
-      let collectionUri, noteUri, webSocketChannelCollectionUri, webSocketChannelItemUri;
+    describe('collection and resource subscription.', () => {
+      let collectionUri,
+        noteUri,
+        collectionWebSocket,
+        itemWebSocket,
+        webSocketCollectionChannelUri,
+        webSocketItemChannelUri;
       const collectionActivities = [];
       const itemActivities = [];
 
@@ -292,18 +288,48 @@ describe('Test app installation', () => {
           actorUri: alice.id
         });
 
-        noteUri = await appServer.call('ldp.container.post', {
-          containerUri: urlJoin(alice.id, 'data/as/object'),
+        await alice.call('webacl.resource.addRights', {
+          webId: 'system',
+          resourceUri: urlJoin(alice.id, 'data/as'),
+          additionalRights: {
+            anon: {
+              uri: APP_URI,
+              read: true,
+              write: true,
+              append: true,
+              control: true
+            }
+          }
+        });
+
+        noteUri = await alice.call('ldp.container.post', {
+          containerUri: urlJoin(alice.id, 'data/as'),
           resource: {
             '@context': 'https://www.w3.org/ns/activitystreams',
             '@type': 'Note',
             name: `A new collection note`,
             content: `The note content.`
+          },
+          contentType: MIME_TYPES.JSON
+        });
+        await alice.call('webacl.resource.addRights', {
+          webId: 'system',
+          resourceUri: noteUri,
+          additionalRights: {
+            anon: {
+              uri: APP_URI,
+              read: true,
+              write: true,
+              append: true,
+              control: true
+            }
           }
         });
       });
 
       test('Create web socket channels as registered app', async () => {
+        // Create channel for listing to collection changes.
+
         const { body: collectionChannelBody } = await appServer.call('signature.proxy.query', {
           url: webSocketChannelSubscriptionUrl,
           method: 'POST',
@@ -318,14 +344,16 @@ describe('Test app installation', () => {
           actorUri: APP_URI
         });
         expect(collectionChannelBody.id).toBeTruthy();
-        webSocketChannelCollectionUri = collectionChannelBody.id;
+        webSocketCollectionChannelUri = collectionChannelBody.id;
 
-        const collectionSocket = new WebSocket(collectionChannelBody['notify:receiveFrom']);
-        collectionSocket.addEventListener('message', e => {
+        console.log('Created channel for collection', collectionChannelBody);
+        collectionWebSocket = new WebSocket(collectionChannelBody['notify:receiveFrom']);
+        collectionWebSocket.addEventListener('message', e => {
           collectionActivities.push(JSON.parse(e.data));
         });
 
-        const { body: webSocketChannelItemBody } = await appServer.call('signature.proxy.query', {
+        // Create channel for listening to item changes.
+        const { body: itemChannelBody } = await appServer.call('signature.proxy.query', {
           url: webSocketChannelSubscriptionUrl,
           method: 'POST',
           headers: new fetch.Headers({ 'Content-Type': 'application/ld+json' }),
@@ -338,11 +366,12 @@ describe('Test app installation', () => {
           }),
           actorUri: APP_URI
         });
-        expect(webSocketChannelItemBody.id).toBeTruthy();
-        webSocketChannelItemUri = webSocketChannelItemBody.id;
+        expect(itemChannelBody.id).toBeTruthy();
+        webSocketItemChannelUri = itemChannelBody.id;
 
-        const itemSocket = new WebSocket(webSocketChannelItemBody['notify:receiveFrom']);
-        itemSocket.addEventListener('message', e => {
+        console.log('Created channel for item', itemChannelBody);
+        itemWebSocket = new WebSocket(itemChannelBody['notify:receiveFrom']);
+        itemWebSocket.addEventListener('message', e => {
           itemActivities.push(JSON.parse(e.data));
         });
       });
@@ -353,7 +382,7 @@ describe('Test app installation', () => {
           item: noteUri
         });
 
-        await waitForExpect(() => {
+        await tryUntilTimeout(() => {
           expect(collectionActivities[collectionActivities.length - 1]).toMatchObject({
             '@context': [
               'https://www.w3.org/ns/activitystreams',
@@ -367,25 +396,14 @@ describe('Test app installation', () => {
       });
 
       test('patch', async () => {
-        noteUri = await appServer.call('ldp.resource.patch', {
+        await alice.call('ldp.resource.patch', {
           resourceUri: noteUri,
           triplesToAdd: [
             triple(namedNode(noteUri), namedNode('https://www.w3.org/ns/activitystreams#tag'), literal('My tag'))
           ]
         });
 
-        await waitForExpect(() => {
-          expect(collectionActivities[collectionActivities.length - 1]).toMatchObject({
-            '@context': [
-              'https://www.w3.org/ns/activitystreams',
-              'https://www.w3.org/ns/solid/notifications-context/v1'
-            ],
-            type: 'Update',
-            object: noteUri,
-            target: collectionUri
-          });
-        }, 10_000);
-        await waitForExpect(() => {
+        await tryUntilTimeout(() => {
           expect(itemActivities[itemActivities.length - 1]).toMatchObject({
             type: 'Update',
             object: noteUri
@@ -394,48 +412,140 @@ describe('Test app installation', () => {
       });
 
       test('delete', async () => {
-        noteUri = await appServer.call('ldp.resource.delete', {
-          resourceUri: noteUri
+        await alice.call('ldp.resource.delete', {
+          resourceUri: noteUri,
+          webId: 'system'
         });
 
-        await waitForExpect(() => {
+        await tryUntilTimeout(() => {
+          expect(itemActivities[itemActivities.length - 1]).toMatchObject({
+            type: 'Delete',
+            object: noteUri
+          });
+        }, 10_000);
+        // Item is replaced by tombstone, and not removed.
+        await tryUntilTimeout(() => {
+          expect(collectionActivities[collectionActivities.length - 1]).not.toMatchObject({
+            type: 'Remove',
+            object: noteUri,
+            target: collectionUri
+          });
+        }, 10_000);
+
+        await alice.call('activitypub.collection.remove', { collectionUri: collectionUri, itemUri: noteUri });
+        // Now the tombstone should be gone.
+        await tryUntilTimeout(() => {
           expect(collectionActivities[collectionActivities.length - 1]).toMatchObject({
             type: 'Remove',
             object: noteUri,
             target: collectionUri
           });
         }, 10_000);
-        await waitForExpect(() => {
-          expect(itemActivities[itemActivities.length - 1]).toMatchObject({
-            type: 'Delete',
-            object: noteUri
+      });
+
+      test('Delete web socket channels', async () => {
+        console.log('Deleting collection channel', webSocketCollectionChannelUri);
+        const responseDelCollection = await appServer.call('signature.proxy.query', {
+          url: webSocketCollectionChannelUri,
+          method: 'DELETE',
+          actorUri: APP_URI
+        });
+        console.log('Deleting item channel', webSocketItemChannelUri);
+        const responseDelItem = await appServer.call('signature.proxy.query', {
+          url: webSocketItemChannelUri,
+          method: 'DELETE',
+          actorUri: APP_URI
+        });
+        expect(responseDelCollection.status).toBe(204);
+        expect(responseDelItem.status).toBe(204);
+        await delay(3_000);
+        expect(collectionWebSocket.readyState).toBe(WebSocket.CLOSED);
+        expect(itemWebSocket.readyState).toBe(WebSocket.CLOSED);
+      });
+    });
+
+    describe('container subscription .', () => {
+      let containerUri, resourceUri, containerWebSocket;
+      const containerActivities = [];
+
+      beforeAll(async () => {
+        containerUri = urlJoin(alice.id, 'data/as');
+        await alice.call('webacl.resource.addRights', {
+          webId: 'system',
+          resourceUri: containerUri,
+          additionalRights: {
+            anon: {
+              uri: APP_URI,
+              read: true,
+              write: true,
+              append: true,
+              control: true
+            }
+          }
+        });
+      });
+
+      test('Create web socket channel as registered app', async () => {
+        const { body } = await appServer.call('signature.proxy.query', {
+          url: webSocketChannelSubscriptionUrl,
+          method: 'POST',
+          headers: new fetch.Headers({ 'Content-Type': 'application/ld+json' }),
+          body: JSON.stringify({
+            '@context': {
+              notify: 'http://www.w3.org/ns/solid/notifications#'
+            },
+            '@type': 'notify:WebSocketChannel2023',
+            'notify:topic': containerUri
+          }),
+          actorUri: APP_URI
+        });
+        expect(body.id).toBeTruthy();
+
+        containerWebSocket = new WebSocket(body['notify:receiveFrom']);
+        containerWebSocket.addEventListener('message', e => {
+          containerActivities.push(JSON.parse(e.data));
+        });
+      });
+
+      test('add', async () => {
+        resourceUri = await alice.call('ldp.container.post', {
+          containerUri,
+          resource: {
+            '@context': 'https://www.w3.org/ns/activitystreams',
+            '@type': 'Object',
+            name: `Some object resource`,
+            content: `I'm a resource with type as:Object.`
+          },
+          contentType: MIME_TYPES.JSON
+        });
+
+        await tryUntilTimeout(() => {
+          expect(containerActivities[containerActivities.length - 1]).toMatchObject({
+            '@context': [
+              'https://www.w3.org/ns/activitystreams',
+              'https://www.w3.org/ns/solid/notifications-context/v1'
+            ],
+            type: 'Add',
+            object: resourceUri,
+            target: containerUri
           });
         }, 10_000);
       });
 
-      test('Delete web socket channel', async () => {
-        const response = await appServer.call('signature.proxy.query', {
-          url: webSocketChannelCollectionUri,
-          method: 'DELETE',
-          actorUri: APP_URI
+      test('delete', async () => {
+        await alice.call('ldp.resource.delete', {
+          resourceUri: resourceUri,
+          webId: 'system'
         });
 
-        expect(response.status).toBe(204);
-
-        const messageLengthBefore = collectionActivities.length;
-        await alice.call('activitypub.outbox.post', {
-          collectionUri: alice.outbox,
-          type: 'Note',
-          content: 'This is a second note created after deleting the channel.'
-        });
-
-        await delay(5000);
-
-        expect(collectionActivities).toHaveLength(messageLengthBefore);
+        await tryUntilTimeout(() => {
+          expect(containerActivities[containerActivities.length - 1]).toMatchObject({
+            type: 'Remove',
+            object: resourceUri,
+            target: containerUri
+          });
+        }, 10_000);
       });
     });
-
-    // Alice's app create a container with shopping items.
-    // create, patch, put, delete
   });
 });

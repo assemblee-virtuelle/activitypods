@@ -22,7 +22,7 @@ const WebSocketChannel2023Service = {
       handlers: {
         /** @param {import('@activitypods/core/services/websocket/websocket.mixin').Connection} connection */
         onConnection: connection => {
-          this.logger.info('onConnection', connection.requestUrl);
+          this.logger.debug('onConnection', connection.requestUrl);
 
           const channel = this.channels.find(c => c.receiveFrom === connection.requestUrl);
           // Check if the requested channel is registered.
@@ -33,15 +33,15 @@ const WebSocketChannel2023Service = {
           this.socketConnections.push(connection);
         },
         onClose: (event, connection) => {
-          this.logger.info('onClose', connection.requestUrl);
-          this.socketConnections = this.socketConnections.filter(c => c === connection);
+          this.logger.debug('onClose', connection.requestUrl);
+          this.socketConnections = this.socketConnections.filter(c => c !== connection);
         },
-        onMessage: (message, connection) => {
-          this.logger.info('onMessage', message, connection.requestUrl);
-          // We don't expect any messages.
-        },
+        // onMessage: (message, connection) => {
+        //   this.logger.debug('onMessage', message, connection.requestUrl);
+        //   // We don't expect any messages.
+        // },
         onError: (event, connection) => {
-          this.logger.info('onError', event, connection.requestUrl);
+          this.logger.debug('onError', event, connection.requestUrl);
           // There is nothing to handle here.
         }
       }
@@ -61,7 +61,7 @@ const WebSocketChannel2023Service = {
 
   methods: {
     onChannelDeleted(channel) {
-      // Close open connections
+      // Close open connections (is removed from array on close event).
       this.socketConnections
         .filter(socketConnection => socketConnection.requestUrl === channel.receiveFrom)
         .forEach(connection => connection.webSocket.close(1001, 'The channel was deleted.'));

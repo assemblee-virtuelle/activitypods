@@ -98,10 +98,38 @@ const waitForResource = async (delayMs, fieldNames, maxTries, callback) => {
   throw new Error(`Waiting for resource failed. No results after ${maxTries} tries`);
 };
 
+const tryUntilTimeout = async (fn, maxWait = 5000, waitBetween = 50) => {
+  // eslint-disable-next-line no-async-promise-executor
+  return new Promise(async (resolve, reject) => {
+    let lastError = undefined;
+    let shouldContinue = true;
+    setTimeout(() => {
+      const timeoutError = new Error(
+        `Timeout exceeded.${lastError && ` See \`cause\` for most recent error: ${lastError.message}`}`
+      );
+      timeoutError.cause = lastError || 'Timeout exceeded';
+      if (lastError?.stack) timeoutError.stack = lastError.stack;
+      reject(timeoutError);
+      shouldContinue = false;
+    }, maxWait);
+
+    while (shouldContinue) {
+      try {
+        const result = await fn(); // eslint-disable-line no-await-in-loop
+        resolve(result);
+        return;
+      } catch (e) {
+        lastError = e;
+        await delay(waitBetween); // eslint-disable-line no-await-in-loop
+      }
+    }
+  });
+};
 module.exports = {
   arrayOf,
   fetchServer,
   fetchMails,
   clearMails,
-  waitForResource
+  waitForResource,
+  tryUntilTimeout
 };

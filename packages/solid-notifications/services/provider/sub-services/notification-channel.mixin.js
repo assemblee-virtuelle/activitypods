@@ -70,28 +70,7 @@ module.exports = {
 
     this.channels = [];
 
-    // Load all channels from all Pods
-    await Promise.all(
-      (await this.broker.call('pod.list')).map(async dataset => {
-        // Why not use auth.account.find here?
-        const webId = urlJoin(this.settings.baseUrl, dataset);
-        const container = await this.actions.list({ webId });
-        for (const channel of arrayOf(container['ldp:contains'])) {
-          this.channels.push({
-            ...channel,
-            id: channel.id || channel['@id'],
-            topic: channel['notify:topic'],
-            sendTo: channel['notify:sendTo'],
-            receiveFrom: channel['notify:receiveFrom'],
-            startAt: channel['notify:startAt'],
-            endAt: channel['notify:endAt'],
-            accept: channel['notify:accept'],
-            rate: channel['notify:rate'],
-            webId
-          });
-        }
-      })
-    );
+    await this.loadChannelsFromDb({ removeOldChannels: true });
   },
   actions: {
     async discover() {
@@ -222,7 +201,7 @@ module.exports = {
         // Check if rate is exceeded.
         .filter(c => {
           if (!(c.lastTriggered && c.rate)) return true;
-          return moment.duration(c.rate).asMilliseconds() > now - c.lastTriggered;
+          return moment.duration(c.rate).asMilliseconds() < now - c.lastTriggered;
         });
 
       return matchedChannels;
@@ -235,7 +214,7 @@ module.exports = {
         object: resourceOrItemUri,
         target: containerOrCollectionUri
       };
-      this.triggerTopicChange(containerOrCollectionUri, activity);
+      this.triggerChannelsForTopic(containerOrCollectionUri, activity);
     },
     onResourceEvent(resourceUri, type, state) {
       const activity = {
@@ -245,30 +224,60 @@ module.exports = {
         object: resourceUri,
         state
       };
-      this.triggerTopicChange(resourceUri, activity);
+      this.triggerChannelsForTopic(resourceUri, activity);
     },
-    async triggerTopicChange(topicUri, activity) {
+    async triggerChannelsForTopic(topicUri, activity) {
       const channelsToTrigger = this.getMatchingChannels(topicUri);
 
-      // Trigger event for each channel (handled by implementing service).
+      // First set lastTriggered, so channels with rate are not triggered multiple times.
+      const now = new Date();
       for (const channel of channelsToTrigger) {
-        await this.onEvent(channel, activity);
+        channel.lastTriggered = now;
       }
 
-      // Update `lastTriggered`.
-      const now = new Date();
-      channelsToTrigger.forEach(c => {
-        c.lastTriggered = now;
-      });
+      // Trigger onEvent for each channel (handled by implementing service).
+      await Promise.all(
+        channelsToTrigger.map(async channel => {
+          await this.onEvent(channel, activity);
+        })
+      );
+    },
+    async loadChannelsFromDb({ removeOldChannels }) {
+      // Load all channels from all Pods
+      await Promise.all(
+        (await this.broker.call('pod.list')).map(async dataset => {
+          // Why not use auth.account.find here?
+          const webId = urlJoin(this.settings.baseUrl, dataset);
+          const container = await this.actions.list({ webId });
+          for (const channel of arrayOf(container['ldp:contains'])) {
+            // Remove channels where endAt is in the past.
+            if (removeOldChannels && channel['notify:endAt'] < new Date()) {
+              this.broker.call('ldp.resource.delete', {
+                resourceUri: channel.id || channel['@id'],
+                webId: 'system'
+              });
+              continue;
+            }
+
+            this.channels.push({
+              ...channel,
+              id: channel.id || channel['@id'],
+              topic: channel['notify:topic'],
+              sendTo: channel['notify:sendTo'],
+              receiveFrom: channel['notify:receiveFrom'],
+              startAt: channel['notify:startAt'],
+              endAt: channel['notify:endAt'],
+              accept: channel['notify:accept'],
+              rate: channel['notify:rate'],
+              webId
+            });
+          }
+        })
+      );
     },
 
-    // Methods to implement by implementing service.
-    onChannelCreated(channel) {
-      // Do nothing by default. Can be overridden.
-    },
-    onChannelDeleted(channel) {
-      // Do nothing by default. Can be overridden.
-    },
+    // METHODS TO IMPLEMENT by implementing service.
+    //
     async onEvent(channel, activity) {
       // This will be called for each channel when its topic changed.
       // The activity is to be sent to the subscriber by the implementing service.
@@ -278,6 +287,12 @@ module.exports = {
     async createReceiveFromUri(topic, webId) {
       // Create a random URI to be registered for `receiveFrom` for a new channel under `this.channels`.
       throw new Error('Not implemented. Please implement this method in your service.');
+    },
+    onChannelCreated(channel) {
+      // Do nothing by default. Can be overridden.
+    },
+    onChannelDeleted(channel) {
+      // Do nothing by default. Can be overridden.
     }
   },
 
