@@ -31,6 +31,7 @@
     "react-hook-form": "^7.47.0",
     "react-router-dom": "^6.17.0",
     "react-sticky-box": "^2.0.4",
+    "react-query": "^3.39.3",
     "speakingurl": "^14.0.1",
     "url-join": "^4.0.1"
   },
