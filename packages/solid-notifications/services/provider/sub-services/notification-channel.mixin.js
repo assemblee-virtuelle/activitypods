@@ -75,6 +75,8 @@ module.exports = {
   actions: {
     async discover() {
       throw new Error('Not implemented. Please provide this action in your service.');
+      // Cache for 1 day.
+      ctx.meta.$responseHeaders = { 'Cache-Control': 'public, max-age=86400' };
     },
 
     async createChannel(ctx) {

@@ -27,6 +27,8 @@ const WebSocketChannel2023Service = {
     async discover(ctx) {
       // TODO Handle content negotiation
       ctx.meta.$responseType = 'application/ld+json';
+      // Cache for 1 day.
+      ctx.meta.$responseHeaders = { 'Cache-Control': 'public, max-age=86400' };
       return {
         '@context': { notify: 'http://www.w3.org/ns/solid/notifications#' },
         '@id': urlJoin(this.settings.baseUrl, '.notifications', 'WebhookChannel2023'),
