@@ -93,7 +93,7 @@ module.exports = {
 
       if (!webhookSubscription) throw new Error(`No webhook subscription URL found for resourceUri ${resourceUri}`);
 
-      // Ensure webhookSubscription['notify:features'] are correct
+      // Ensure webhookSubscription['notify:feature'] are correct
 
       // Generate a webhook path
       const webhookUrl = urlJoin(this.settings.baseUrl, '.webhooks', uuidv4());
@@ -175,9 +175,8 @@ module.exports = {
 
       if (response.ok) {
         return await response.json();
-      } else {
-        return false;
       }
+      return false;
     }
   }
 };

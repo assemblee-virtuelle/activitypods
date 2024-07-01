@@ -90,6 +90,7 @@ const CoreService = {
     this.broker.createService(ApiService, {
       settings: {
         ...this.settings.api,
+        baseUrl,
         frontendUrl
       }
     });

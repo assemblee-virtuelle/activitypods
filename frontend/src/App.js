@@ -1,6 +1,7 @@
 import React from 'react';
 import { Admin, Resource, CustomRoutes, memoryStore } from 'react-admin';
 import { BrowserRouter, Route } from 'react-router-dom';
+import { QueryClient } from 'react-query';
 import { StyledEngineProvider } from '@mui/material/styles';
 import { LocalLoginPage } from '@semapps/auth-provider';
 
@@ -27,6 +28,17 @@ import UserPage from './pages/UserPage';
 import RedirectPage from './pages/RedirectPage';
 import InvitePage from './pages/InvitePage/InvitePage';
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+      cacheTime: 30 * 60 * 1000, // Cache unused data for 30 minutes.
+      retry: 3
+    }
+  }
+});
+
 const LoginPage = () => (
   <LocalLoginPage
     allowUsername
@@ -49,6 +61,7 @@ const App = () => (
         layout={Layout}
         theme={theme}
         store={memoryStore()}
+        queryClient={queryClient}
       >
         {Object.entries(resources).map(([key, resource]) => (
           <Resource key={key} name={key} {...resource.config} />

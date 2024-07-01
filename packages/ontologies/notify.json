@@ -30,6 +30,33 @@
     },
     "notify:topic": {
       "@type": "@id"
+    },
+    "notify:state": {
+      "@type": "@id"
+    },
+    "notify:feature": {
+      "@type": "@id"
+    },
+    "notify:channelType": {
+      "@type": "@id"
+    },
+    "notify:accept": {
+      "@type": "@id"
+    },
+    "notify:EventSourceChannel2023": {
+      "@type": "@id"
+    },
+    "notify:LDNChannel2023": {
+      "@type": "@id"
+    },
+    "notify:StreamingHTTPChannel2023": {
+      "@type": "@id"
+    },
+    "notify:WebhookChannel2023": {
+      "@type": "@id"
+    },
+    "notify:WebSocketChannel2023": {
+      "@type": "@id"
     }
   }
 }
